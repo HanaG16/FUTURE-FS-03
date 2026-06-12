@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Fleet — Ascend Tour & Car Rental</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <link rel="stylesheet" href="../css/fleet.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,90 5,90' fill='%23E8470A'/><path d='M20,90 Q50,60 80,90' fill='%23111'/><polygon points='68,65 95,90 68,90' fill='%23C23A08'/></svg>"/>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     NAVBAR
+═══════════════════════════════════ -->
+<header id="navbar">
+  <nav class="nav-container">
+    <a href="fleet.html" class="nav-logo">
+      <img src="../images/logo.png" alt="Ascend Tour and Car Rental"/>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html#home"     class="nav-link">Home</a></li>
+      <li><a href="../index.html#about"    class="nav-link">About</a></li>
+      <li><a href="../index.html#services" class="nav-link">Services</a></li>
+      <li><a href="fleet.html"             class="nav-link active">Fleet</a></li>
+      <li><a href="tours.html"             class="nav-link">Tours</a></li>
+      <li><a href="../index.html#contact"  class="nav-link">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon" id="themeIcon"></i>
+      </button>
+      <a href="#fleet-booking" class="btn-ghost-nav">Book Now</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+
+<!-- ═══════════════════════════════════
+     PAGE HERO
+═══════════════════════════════════ -->
+<section class="page-hero">
+  <div class="page-hero-overlay"></div>
+  <div class="container page-hero-content">
+    <div class="page-breadcrumb">
+      <a href="../index.html">Home</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Our Fleet</span>
+    </div>
+    <h1 class="page-hero-title">Our <span class="accent">Fleet</span></h1>
+    <p class="page-hero-sub">8 vehicles ready for any journey — from city commutes to highland expeditions.</p>
+  </div>
+
+  <!-- Floating stats -->
+  <div class="fleet-hero-stats">
+    <div class="fhs-item">
+      <i class="fa-solid fa-car"></i>
+      <div><strong>8</strong><span>Vehicle Models</span></div>
+    </div>
+    <div class="fhs-divider"></div>
+    <div class="fhs-item">
+      <i class="fa-solid fa-users"></i>
+      <div><strong>2–45</strong><span>Passenger Range</span></div>
+    </div>
+    <div class="fhs-divider"></div>
+    <div class="fhs-item">
+      <i class="fa-solid fa-user-tie"></i>
+      <div><strong>Self / Chauffeured</strong><span>Drive Options</span></div>
+    </div>
+    <div class="fhs-divider"></div>
+    <div class="fhs-item">
+      <i class="fa-solid fa-shield-halved"></i>
+      <div><strong>Fully</strong><span>Insured & GPS</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     FILTER BAR
+═══════════════════════════════════ -->
+<section class="fleet-filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <p class="filter-label"><i class="fa-solid fa-sliders"></i> Filter by type:</p>
+      <div class="filter-btns">
+        <button class="filter-btn active" data-filter="all">All Vehicles</button>
+        <button class="filter-btn" data-filter="suv">SUV / 4×4</button>
+        <button class="filter-btn" data-filter="sedan">Sedan</button>
+        <button class="filter-btn" data-filter="van">Van / Bus</button>
+        <button class="filter-btn" data-filter="pickup">Pickup</button>
+      </div>
+      <div class="filter-count">
+        Showing <span id="vehicleCount">8</span> vehicles
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     FLEET GRID
+═══════════════════════════════════ -->
+<section class="fleet-section">
+  <div class="container">
+    <div class="fleet-grid" id="fleetGrid">
+
+      <!-- 1. Toyota Land Cruiser -->
+      <div class="fcard fade-up" data-type="suv">
+        <div class="fcard-img">
+          <img src="../images/LC.png" alt="Toyota Land Cruiser"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Toyota Land Cruiser')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-popular">Most Popular</span>
+          <span class="fcard-type-tag">SUV</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Toyota Land Cruiser</h3>
+              <p class="fcard-subtitle">The go-anywhere workhorse of Ethiopia</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>7 Passengers</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Diesel</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-mountain"></i><span>Off-Road</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Automatic</span></div>
+            <div class="spec-item"><i class="fa-solid fa-location-dot"></i><span>GPS</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Self Drive</span>
+            <span><i class="fa-solid fa-check"></i> With Driver</span>
+            <span><i class="fa-solid fa-check"></i> Long Distance</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Toyota Land Cruiser')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Toyota Land Cruiser 4x4 -->
+      <div class="fcard fade-up" data-type="suv">
+        <div class="fcard-img">
+          <img src="../images/LC4.jpg" alt="Toyota Land Cruiser 4x4"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Toyota Land Cruiser 4×4')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-adventure">Adventure</span>
+          <span class="fcard-type-tag">4×4</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Toyota Land Cruiser 4×4</h3>
+              <p class="fcard-subtitle">Built for Ethiopia's toughest terrain</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>8 Passengers</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Diesel</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-mountain"></i><span>4WD</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Manual / Auto</span></div>
+            <div class="spec-item"><i class="fa-solid fa-location-dot"></i><span>GPS</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Off-Road Tours</span>
+            <span><i class="fa-solid fa-check"></i> With Driver</span>
+            <span><i class="fa-solid fa-check"></i> Roof Rack</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Toyota Land Cruiser 4×4')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Land Cruiser V8 -->
+      <div class="fcard fade-up" data-type="suv">
+        <div class="fcard-img">
+          <img src="../images/v8.jpg" alt="Land Cruiser V8"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Land Cruiser V8')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-premium">Premium</span>
+          <span class="fcard-type-tag">SUV</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Land Cruiser V8</h3>
+              <p class="fcard-subtitle">Power, luxury, and performance</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>7 Passengers</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Petrol V8</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>Climate A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-star"></i><span>Luxury</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Automatic</span></div>
+            <div class="spec-item"><i class="fa-solid fa-location-dot"></i><span>GPS</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> VIP Transport</span>
+            <span><i class="fa-solid fa-check"></i> With Driver</span>
+            <span><i class="fa-solid fa-check"></i> Leather Interior</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Land Cruiser V8')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Hilux Pickup -->
+      <div class="fcard fade-up" data-type="pickup">
+        <div class="fcard-img">
+          <img src="../images/hilux 2.jpg" alt="Toyota Hilux Pickup"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Toyota Hilux Pickup')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-work">Workhorse</span>
+          <span class="fcard-type-tag">Pickup</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Toyota Hilux Pickup</h3>
+              <p class="fcard-subtitle">Reliable and tough for any terrain</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>5 Passengers</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Diesel</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-truck"></i><span>Cargo Bed</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Manual</span></div>
+            <div class="spec-item"><i class="fa-solid fa-mountain"></i><span>4WD</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Cargo Transport</span>
+            <span><i class="fa-solid fa-check"></i> Field Missions</span>
+            <span><i class="fa-solid fa-check"></i> NGO Projects</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Toyota Hilux Pickup')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Toyota Mark 2 -->
+      <div class="fcard fade-up" data-type="SUV">
+        <div class="fcard-img">
+          <img src="../images/mark.jpeg" alt="Toyota Mark 2(Toyota Land Crusier hzj76)"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Toyota Mark 2')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-exec">Adventure</span>
+          <span class="fcard-type-tag">SUV</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Toyota Land Cruiser hzj76(Mark II)</h3>
+              <p class="fcard-subtitle">Adventure</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+           <div class="spec-item"><i class="fa-solid fa-users"></i><span>5 Passengers</span></div>
+<div class="spec-item"><i class="fa-solid fa-mountain"></i><span>Heavy Off-Road</span></div>
+<div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Diesel</span></div>
+<div class="spec-item"><i class="fa-solid fa-gear"></i><span>Manual 5-Speed</span></div>
+<div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+<div class="spec-item"><i class="fa-solid fa-mountain"></i><span>4WD</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Airport Transfers</span>
+            <span><i class="fa-solid fa-check"></i> Business Trips</span>
+            <span><i class="fa-solid fa-check"></i> Self Drive</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Toyota Mark 2')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Suzuki Dzire -->
+      <div class="fcard fade-up" data-type="sedan">
+        <div class="fcard-img">
+          <img src="../images/su.jpg" alt="Suzuki Dzire"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Suzuki Dzire')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-economy">Economy</span>
+          <span class="fcard-type-tag">Sedan</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Suzuki Dzire</h3>
+              <p class="fcard-subtitle">Compact, efficient city sedan</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>5 Passengers</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Petrol</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-leaf"></i><span>Fuel Efficient</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Manual / Auto</span></div>
+            <div class="spec-item"><i class="fa-solid fa-city"></i><span>City Drive</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Budget Friendly</span>
+            <span><i class="fa-solid fa-check"></i> Self Drive</span>
+            <span><i class="fa-solid fa-check"></i> Daily Rental</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Suzuki Dzire')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Toyota HiAce Van -->
+      <div class="fcard fade-up" data-type="van">
+        <div class="fcard-img">
+          <img src="../images/minibus.jpg" alt="Toyota HiAce Van"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Toyota HiAce Van')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-group">Group Travel</span>
+          <span class="fcard-type-tag">Van</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Toyota HiAce Van</h3>
+              <p class="fcard-subtitle">Perfect for group tours & transfers</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>12 Passengers</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Diesel</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-suitcase"></i><span>Luggage Space</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Manual</span></div>
+            <div class="spec-item"><i class="fa-solid fa-user-tie"></i><span>With Driver</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Group Tours</span>
+            <span><i class="fa-solid fa-check"></i> Airport Pickup</span>
+            <span><i class="fa-solid fa-check"></i> Corporate Events</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Toyota HiAce Van')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Coaster Bus -->
+      <div class="fcard fade-up" data-type="van">
+        <div class="fcard-img">
+          <img src="../images/coaster2.jpg" alt="Coaster Bus"/>
+          <div class="fcard-overlay">
+            <a href="#fleet-booking" class="fcard-quick-book" onclick="setVehicle('Coaster Bus')">
+              <i class="fa-solid fa-calendar-check"></i> Quick Book
+            </a>
+          </div>
+          <span class="fcard-badge badge-large">Large Group</span>
+          <span class="fcard-type-tag">Bus</span>
+        </div>
+        <div class="fcard-body">
+          <div class="fcard-header">
+            <div>
+              <h3>Coaster Bus</h3>
+              <p class="fcard-subtitle">Ideal for large delegations & events</p>
+            </div>
+            <div class="fcard-avail available">
+              <i class="fa-solid fa-circle"></i> Available
+            </div>
+          </div>
+          <div class="fcard-specs">
+            <div class="spec-item"><i class="fa-solid fa-users"></i><span>Up to 45</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gas-pump"></i><span>Diesel</span></div>
+            <div class="spec-item"><i class="fa-solid fa-snowflake"></i><span>A/C</span></div>
+            <div class="spec-item"><i class="fa-solid fa-suitcase"></i><span>Luggage Bay</span></div>
+            <div class="spec-item"><i class="fa-solid fa-gear"></i><span>Manual</span></div>
+            <div class="spec-item"><i class="fa-solid fa-user-tie"></i><span>With Driver</span></div>
+          </div>
+          <div class="fcard-features">
+            <span><i class="fa-solid fa-check"></i> Delegations</span>
+            <span><i class="fa-solid fa-check"></i> Conferences</span>
+            <span><i class="fa-solid fa-check"></i> School Groups</span>
+          </div>
+          <div class="fcard-footer">
+            <a href="#fleet-booking" class="btn-orange-ghost fcard-btn" onclick="setVehicle('Coaster Bus')">
+              Book This Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /fleet-grid -->
+
+    <!-- No results message -->
+    <div class="no-results" id="noResults" style="display:none;">
+      <i class="fa-solid fa-car-burst"></i>
+      <h3>No vehicles match this filter</h3>
+      <p>Try selecting a different category.</p>
+      <button class="btn-orange-ghost" onclick="resetFilter()">Show All Vehicles</button>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     BOOKING FORM
+═══════════════════════════════════ -->
+<section id="fleet-booking" class="fleet-booking-section">
+  <div class="container">
+    <div class="booking-grid">
+
+      <!-- Left: Info -->
+      <div class="booking-info fade-up">
+        <span class="section-tag">Reserve Your Vehicle</span>
+        <h2 class="section-title">Book a Vehicle</h2>
+        <p>Fill in the form and our team will confirm availability and pricing within <strong>2 hours</strong>. No payment required to enquire.</p>
+
+        <div class="booking-highlights">
+          <div class="bh-item">
+            <div class="bh-icon"><i class="fa-solid fa-clock"></i></div>
+            <div><h4>Fast Confirmation</h4><p>We confirm availability within 2 hours of your request.</p></div>
+          </div>
+          <div class="bh-item">
+            <div class="bh-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div><h4>Fully Insured</h4><p>All vehicles carry comprehensive insurance for your safety.</p></div>
+          </div>
+          <div class="bh-item">
+            <div class="bh-icon"><i class="fa-solid fa-rotate-left"></i></div>
+            <div><h4>Free Cancellation</h4><p>Cancel or reschedule up to 24 hours before pickup at no cost.</p></div>
+          </div>
+          <div class="bh-item">
+            <div class="bh-icon"><i class="fa-solid fa-phone"></i></div>
+            <div><h4>24/7 Support</h4><p>Our team is always reachable at +251-920123960.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Form -->
+      <div class="booking-form-wrap fade-up">
+        <div class="booking-form-box">
+          <div class="bform-header">
+            <h3>Vehicle Booking Request</h3>
+            <p>Selected: <strong id="selectedVehicleDisplay">— Choose from above —</strong></p>
+          </div>
+
+          <form id="fleetBookingForm" novalidate>
+            <input type="hidden" id="selectedVehicle" name="vehicle" value=""/>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="bFirstName" placeholder="Abebe" required/>
+              </div>
+              <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" id="bLastName" placeholder="Kebede" required/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Phone / WhatsApp *</label>
+              <input type="tel" id="bPhone" placeholder="+251 9..." required/>
+            </div>
+
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="bEmail" placeholder="you@example.com"/>
+            </div>
+
+            <div class="form-group">
+              <label>Vehicle *</label>
+              <select id="bVehicle" name="vehicleSelect" required>
+                <option value="">Select a vehicle...</option>
+                <option>Toyota Land Cruiser</option>
+                <option>Toyota Land Cruiser 4×4</option>
+                <option>Land Cruiser V8</option>
+                <option>Toyota Hilux Pickup</option>
+                <option>Toyota Mark 2</option>
+                <option>Suzuki Dzire</option>
+                <option>Toyota HiAce Van</option>
+                <option>Coaster Bus</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Drive Option *</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="driveOption" value="with-driver" checked/>
+                  <span><i class="fa-solid fa-user-tie"></i> With Driver</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="driveOption" value="self-drive"/>
+                  <span><i class="fa-solid fa-steering-wheel"></i> Self Drive</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Pickup Date *</label>
+                <input type="date" id="bPickupDate" required/>
+              </div>
+              <div class="form-group">
+                <label>Return Date</label>
+                <input type="date" id="bReturnDate"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Pickup Location *</label>
+              <input type="text" id="bPickupLocation" placeholder="e.g. Bole Airport, Addis Ababa" required/>
+            </div>
+
+            <div class="form-group">
+              <label>Destination / Notes</label>
+              <textarea rows="3" placeholder="Where are you going? Any special requirements?"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="bSubmitBtn">
+              Send Booking Request <i class="fa-solid fa-paper-plane"></i>
+            </button>
+            <p class="form-note">
+              <i class="fa-solid fa-lock"></i> No payment now — we'll confirm details first.
+            </p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════
+     FOOTER
+═══════════════════════════════════ -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="../images/logo.png" alt="Ascend" class="footer-logo"/>
+        <p>Your trusted partner for premium tours and car rentals across Ethiopia — a true local transportation solution for personal and corporate needs.</p>
+        <p class="footer-tagline">Where Efficiency Meets Mobility</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../index.html#about">About Us</a></li>
+          <li><a href="../index.html#services">Services</a></li>
+          <li><a href="fleet.html">Our Fleet</a></li>
+          <li><a href="tours.html">Tours</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Our Fleet</h4>
+        <ul>
+          <li><a href="#">Toyota Land Cruiser</a></li>
+          <li><a href="#">Land Cruiser 4×4 & V8</a></li>
+          <li><a href="#">Toyota Hilux Pickup</a></li>
+          <li><a href="#">Toyota Mark 2</a></li>
+          <li><a href="#">Suzuki Dzire</a></li>
+          <li><a href="#">HiAce Van & Coaster</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul class="footer-contact">
+          <li><i class="fa-solid fa-phone"></i><a href="tel:+251920123960">+251-920123960</a></li>
+          <li><i class="fa-solid fa-envelope"></i><a href="mailto:ascendtourandcarrental@gmail.com">ascendtourandcarrental@gmail.com</a></li>
+          <li><i class="fa-solid fa-location-dot"></i><span>22, Tsega Business Center, 7th Floor, Addis Ababa</span></li>
+        </ul>
+        <div class="footer-socials">
+          <a href="https://wa.me/251951846464" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="https://t.me/Decc_21"><i class="fa-brands fa-telegram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Ascend Tour and Car Rental. All rights reserved. 🇪🇹</p>
+      <div class="footer-btm-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a></div>
+    </div>
+  </div>
+</footer>
+
+<button id="backToTop" class="back-to-top" aria-label="Back to top">
+  <i class="fa-solid fa-chevron-up"></i>
+</button>
+
+<script src="../js/main.js"></script>
+<script src="../JS/fleet.js"></script>
+<script src="../JS/Forms.js"></script>
+</body>
+</html>
