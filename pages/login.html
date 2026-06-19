@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login — Ascend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --orange:#E8470A; --orange-glow:rgba(232,71,10,0.12);
+      --bg:#F4F4F4; --bg-card:#fff; --border:rgba(0,0,0,0.09);
+      --text:#111; --text-muted:#666; --text-light:#999;
+      --radius:8px; --shadow:0 2px 16px rgba(0,0,0,0.07);
+    }
+    [data-theme="dark"] {
+      --bg:#0D0D0D; --bg-card:#1A1A1A; --border:rgba(255,255,255,0.08);
+      --text:#F2F2F2; --text-muted:#AAA; --text-light:#555;
+    }
+    *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Open Sans',sans-serif; background:var(--bg); color:var(--text);
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      padding:1.5rem;
+    }
+    .login-card {
+      width:100%; max-width:380px;
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .login-header {
+      background:#0A0A0A; padding:2rem 1.5rem 1.5rem;
+      text-align:center; border-bottom:3px solid var(--orange);
+    }
+    .login-logo { width:64px; height:64px; object-fit:contain; margin-bottom:.75rem; }
+    .login-brand {
+      font-family:'Montserrat',sans-serif; font-weight:900; font-size:1.1rem;
+      color:#fff; letter-spacing:.1em;
+    }
+    .login-brand em { color:var(--orange); font-style:normal; }
+    .login-sub {
+      font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:600;
+      letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.45);
+      margin-top:.35rem;
+    }
+    .login-body { padding:1.75rem 1.5rem; }
+    .field { margin-bottom:1.1rem; }
+    .field label {
+      display:block; font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase; color:var(--text-light); margin-bottom:.4rem;
+    }
+    .field-input-wrap { position:relative; }
+    .field-input-wrap i.icon-left {
+      position:absolute; left:.85rem; top:50%; transform:translateY(-50%);
+      color:var(--text-light); font-size:.85rem;
+    }
+    .field input {
+      width:100%; padding:.7rem .85rem .7rem 2.3rem;
+      border:1.5px solid var(--border); border-radius:var(--radius);
+      background:var(--bg); color:var(--text); font-size:.9rem;
+      outline:none; transition:border-color .2s;
+    }
+    .field input:focus { border-color:var(--orange); }
+    .toggle-pw {
+      position:absolute; right:.75rem; top:50%; transform:translateY(-50%);
+      background:none; border:none; color:var(--text-light); cursor:pointer; font-size:.85rem;
+    }
+    .btn-login {
+      width:100%; padding:.8rem; margin-top:.3rem;
+      background:var(--orange); border:none; border-radius:var(--radius);
+      color:#fff; font-family:'Montserrat',sans-serif; font-size:.78rem; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;
+    }
+    .btn-login:hover { opacity:.9; }
+    .btn-login:disabled { opacity:.5; cursor:not-allowed; }
+    .error-msg {
+      display:none; background:rgba(231,76,60,.1); color:#e74c3c;
+      border:1px solid rgba(231,76,60,.3); border-radius:var(--radius);
+      padding:.6rem .8rem; font-size:.78rem; margin-bottom:1rem;
+      align-items:center; gap:.5rem;
+    }
+    .error-msg.show { display:flex; }
+    .login-footer {
+      text-align:center; padding:0 1.5rem 1.5rem; font-size:.7rem; color:var(--text-light);
+    }
+    .login-footer i { color:var(--orange); margin-right:.3rem; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="login-header">
+      <img src="../images/logo.png" alt="Ascend Logo" class="login-logo" onerror="this.style.display='none'"/>
+      <div class="login-brand">ASCEND <em>ADMIN</em></div>
+      <div class="login-sub">Restricted Access</div>
+    </div>
+    <div class="login-body">
+      <div class="error-msg" id="errorMsg"><i class="fa-solid fa-triangle-exclamation"></i><span id="errorText"></span></div>
+      <form id="loginForm">
+        <div class="field">
+          <label>Username</label>
+          <div class="field-input-wrap">
+            <i class="fa-solid fa-user icon-left"></i>
+            <input type="text" id="username" autocomplete="username" required/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="field-input-wrap">
+            <i class="fa-solid fa-lock icon-left"></i>
+            <input type="password" id="password" autocomplete="current-password" required style="padding-right:2.4rem;"/>
+            <button type="button" class="toggle-pw" id="togglePw"><i class="fa-solid fa-eye" id="togglePwIcon"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="btn-login" id="loginBtn">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </button>
+      </form>
+    </div>
+    <div class="login-footer">
+      <i class="fa-solid fa-shield-halved"></i>Session expires after 2 hours of login
+    </div>
+  </div>
+
+<script>
+/* ════════════════════════════════════════════
+   ADMIN LOGIN — client-side gate
+   NOTE: this is a static page with no backend,
+   so this deters casual access but is NOT a
+   substitute for real server-side auth.
+════════════════════════════════════════════ */
+
+/* ── CONFIG ── */
+var ADMIN_USERNAME = 'admin';
+/* SHA-256("ascend_2026_salt_" + password). Change PASSWORD_HASH if you change the password. */
+var SALT = 'ascend_2026_salt_';
+var PASSWORD_HASH = '9a2a833406f0e23978c18786fb1a3a7c6ec127875b2512165ce8dec75d9eaf3b';
+
+var SESSION_KEY      = 'ascend_admin_session';
+var SESSION_LENGTH   = 2 * 60 * 60 * 1000;       // 2 hours
+var ATTEMPTS_KEY      = 'ascend_login_attempts';
+var MAX_ATTEMPTS      = 5;
+var LOCKOUT_LENGTH    = 15 * 60 * 1000;          // 15 minutes
+
+/* If already logged in, skip straight to dashboard */
+(function () {
+  try {
+    var raw = sessionStorage.getItem(SESSION_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      if (s.expires && Date.now() < s.expires) {
+        window.location.replace('admin.html');
+      }
+    }
+  } catch (e) {}
+})();
+
+async function sha256(str) {
+  var enc = new TextEncoder().encode(str);
+  var buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(function (b) {
+    return b.toString(16).padStart(2, '0');
+  }).join('');
+}
+
+function getAttempts() {
+  try {
+    var raw = localStorage.getItem(ATTEMPTS_KEY);
+    return raw ? JSON.parse(raw) : { count: 0, lockedUntil: 0 };
+  } catch (e) { return { count: 0, lockedUntil: 0 }; }
+}
+function setAttempts(obj) {
+  localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(obj));
+}
+
+function showError(msg) {
+  var box = document.getElementById('errorMsg');
+  document.getElementById('errorText').textContent = msg;
+  box.classList.add('show');
+}
+function hideError() {
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+function formatMinutes(ms) {
+  return Math.ceil(ms / 60000);
+}
+
+function checkLockState() {
+  var a = getAttempts();
+  var btn = document.getElementById('loginBtn');
+  if (a.lockedUntil && Date.now() < a.lockedUntil) {
+    btn.disabled = true;
+    showError('Too many failed attempts. Try again in ' + formatMinutes(a.lockedUntil - Date.now()) + ' min.');
+    return false;
+  }
+  btn.disabled = false;
+  return true;
+}
+
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  hideError();
+
+  if (!checkLockState()) return;
+
+  var btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+
+  var user = document.getElementById('username').value.trim();
+  var pass = document.getElementById('password').value;
+  var hash = await sha256(SALT + pass);
+
+  if (user === ADMIN_USERNAME && hash === PASSWORD_HASH) {
+    // success — reset attempts, create session
+    setAttempts({ count: 0, lockedUntil: 0 });
+    var token = (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '-' + Math.random()));
+    var session = { token: token, expires: Date.now() + SESSION_LENGTH };
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    window.location.replace('admin.html');
+    return;
+  }
+
+  // failure — increment attempts
+  var a = getAttempts();
+  a.count = (a.count || 0) + 1;
+  if (a.count >= MAX_ATTEMPTS) {
+    a.lockedUntil = Date.now() + LOCKOUT_LENGTH;
+    a.count = 0;
+  }
+  setAttempts(a);
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+
+  if (a.lockedUntil && Date.now() < a.lockedUntil) {
+    showError('Too many failed attempts. Try again in ' + formatMinutes(a.lockedUntil - Date.now()) + ' min.');
+    btn.disabled = true;
+  } else {
+    var remaining = MAX_ATTEMPTS - a.count;
+    showError('Incorrect username or password. ' + remaining + ' attempt(s) left.');
+  }
+
+  document.getElementById('password').value = '';
+});
+
+document.getElementById('togglePw').addEventListener('click', function () {
+  var input = document.getElementById('password');
+  var icon  = document.getElementById('togglePwIcon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fa-solid fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fa-solid fa-eye';
+  }
+});
+
+checkLockState();
+// Refresh the lock countdown message every 10s if locked
+setInterval(checkLockState, 10000);
+</script>
+</body>
+</html>
