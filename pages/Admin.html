@@ -19,7 +19,8 @@
       --text:#F2F2F2; --text-muted:#AAA; --text-light:#555;
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Open Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    html { -webkit-text-size-adjust:100%; }
+    body { font-family:'Open Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
 
     /* ── TOP BAR ── */
     .topbar {
@@ -31,37 +32,51 @@
       justify-content: space-between;
       position: sticky; top:0; z-index:100;
       border-bottom: 1px solid rgba(232,71,10,0.3);
+      gap: .75rem;
     }
+    .topbar-left { display:flex; align-items:center; gap:.75rem; min-width:0; }
     .topbar-brand {
       display:flex; align-items:center; gap:.75rem;
       font-family:'Montserrat',sans-serif; font-weight:900;
       font-size:1rem; color:#fff; letter-spacing:.1em;
+      min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .topbar-brand img.brand-logo { width:80px; height:80px; object-fit:contain; border-radius:6px; margin-bottom:-50px; }
+    .topbar-brand img.brand-logo { width:80px; height:80px; object-fit:contain; border-radius:6px; margin-bottom:-30px; flex-shrink:0; }
     .topbar-brand em { color:var(--orange); font-style:normal; }
-    .topbar-right { display:flex; align-items:center; gap:1rem; }
+    .topbar-right { display:flex; align-items:center; gap:1rem; flex-shrink:0; }
     .topbar-badge {
       background:var(--orange); color:#fff;
       font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:700;
       letter-spacing:.1em; text-transform:uppercase;
-      padding:.25rem .7rem; border-radius:50px;
+      padding:.25rem .7rem; border-radius:50px; white-space:nowrap;
     }
     .topbar-link {
       font-family:'Montserrat',sans-serif; font-size:.72rem; font-weight:600;
       letter-spacing:.08em; text-transform:uppercase;
       color:rgba(255,255,255,.5); text-decoration:none; transition:color .2s;
+      white-space:nowrap;
     }
     .topbar-link:hover { color:#fff; }
     .btn-theme {
       background:transparent; border:1px solid rgba(255,255,255,.2);
       color:rgba(255,255,255,.6); width:32px; height:32px; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
-      cursor:pointer; font-size:.8rem; transition:all .2s;
+      cursor:pointer; font-size:.8rem; transition:all .2s; flex-shrink:0;
     }
     .btn-theme:hover { border-color:var(--orange); color:var(--orange); }
 
+    /* Hamburger (hidden on desktop) */
+    .btn-menu {
+      display:none;
+      background:transparent; border:1px solid rgba(255,255,255,.2);
+      color:#fff; width:36px; height:36px; border-radius:6px;
+      align-items:center; justify-content:center;
+      cursor:pointer; font-size:1rem; flex-shrink:0;
+    }
+    .btn-menu:hover { border-color:var(--orange); color:var(--orange); }
+
     /* ── LAYOUT ── */
-    .admin-layout { display:flex; min-height:calc(100vh - 60px); }
+    .admin-layout { display:flex; min-height:calc(100vh - 60px); position:relative; }
 
     /* ── SIDEBAR ── */
     .sidebar {
@@ -72,6 +87,8 @@
       position: sticky; top:60px;
       height: calc(100vh - 60px);
       overflow-y: auto;
+      transition: transform .25s ease;
+      z-index: 90;
     }
     .sidebar-section {
       font-family:'Montserrat',sans-serif; font-size:.6rem; font-weight:700;
@@ -80,7 +97,7 @@
     }
     .sidebar-link {
       display:flex; align-items:center; gap:.75rem;
-      padding:.65rem 1.4rem;
+      padding:.7rem 1.4rem;
       font-family:'Montserrat',sans-serif; font-size:.78rem; font-weight:600;
       color:var(--text-muted); cursor:pointer; transition:all .2s;
       border-left:3px solid transparent; text-decoration:none;
@@ -93,8 +110,17 @@
       font-size:.58rem; font-weight:700; padding:.15rem .45rem; border-radius:50px;
     }
 
+    /* Backdrop for mobile drawer */
+    .sidebar-backdrop {
+      display:none;
+      position:fixed; inset:0; top:60px;
+      background:rgba(0,0,0,.45);
+      z-index:80;
+    }
+    .sidebar-backdrop.open { display:block; }
+
     /* ── MAIN ── */
-    .admin-main { flex:1; padding:2rem; overflow-x:hidden; }
+    .admin-main { flex:1; padding:2rem; overflow-x:hidden; min-width:0; }
 
     /* ── STATS CARDS ── */
     .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
@@ -103,6 +129,7 @@
       border-radius:var(--radius); padding:1.2rem 1.4rem;
       display:flex; align-items:center; gap:1rem;
       box-shadow:var(--shadow);
+      min-width:0;
     }
     .stat-card-icon {
       width:44px; height:44px; border-radius:var(--radius);
@@ -127,7 +154,7 @@
     .section-title {
       font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; color:var(--text);
     }
-    .header-actions { display:flex; gap:.5rem; align-items:center; }
+    .header-actions { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
 
     .btn-sm {
       font-family:'Montserrat',sans-serif; font-size:.7rem; font-weight:700;
@@ -156,12 +183,13 @@
     /* ── SEARCH ── */
     .search-box {
       position:relative;
+      flex: 1 1 200px;
     }
     .search-box input {
       background:var(--bg); border:1.5px solid var(--border);
       border-radius:var(--radius); padding:.38rem .85rem .38rem 2rem;
       font-family:'Open Sans',sans-serif; font-size:.82rem; color:var(--text);
-      outline:none; width:200px; transition:border-color .2s;
+      outline:none; width:200px; max-width:100%; transition:border-color .2s;
     }
     .search-box input:focus { border-color:var(--orange); }
     .search-box i { position:absolute; left:.65rem; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:.8rem; }
@@ -171,6 +199,7 @@
       background:var(--bg-card); border:1px solid var(--border);
       border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
     }
+    .table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
     table { width:100%; border-collapse:collapse; }
     thead { background:var(--bg); border-bottom:1px solid var(--border); }
     th {
@@ -244,18 +273,20 @@
       display:flex; align-items:center; justify-content:space-between;
       border-bottom:1px solid var(--border);
       background:var(--orange);
+      gap:.75rem;
     }
-    .modal-header h3 { font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; color:#fff; }
-    .modal-close { background:transparent; border:none; color:rgba(255,255,255,.7); font-size:1.1rem; cursor:pointer; }
+    .modal-header h3 { font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; color:#fff; min-width:0; overflow-wrap:anywhere; }
+    .modal-close { background:transparent; border:none; color:rgba(255,255,255,.7); font-size:1.1rem; cursor:pointer; flex-shrink:0; }
     .modal-close:hover { color:#fff; }
     .modal-body { padding:1.5rem; }
 
     .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .detail-item { min-width:0; }
     .detail-item label {
       display:block; font-family:'Montserrat',sans-serif; font-size:.62rem; font-weight:700;
       letter-spacing:.1em; text-transform:uppercase; color:var(--text-light); margin-bottom:.3rem;
     }
-    .detail-item p { font-size:.88rem; color:var(--text); font-weight:500; }
+    .detail-item p { font-size:.88rem; color:var(--text); font-weight:500; overflow-wrap:anywhere; }
     .detail-full { grid-column:1/-1; }
     .detail-divider { grid-column:1/-1; border:none; border-top:1px solid var(--border); margin:.25rem 0; }
 
@@ -275,7 +306,7 @@
 
     /* Toast notification */
     .toast {
-      position:fixed; bottom:2rem; right:2rem;
+      position:fixed; bottom:2rem; right:2rem; left:auto;
       background:#27ae60; color:#fff;
       font-family:'Montserrat',sans-serif; font-size:.78rem; font-weight:600;
       padding:.75rem 1.2rem; border-radius:var(--radius);
@@ -283,32 +314,60 @@
       transform:translateY(80px); opacity:0;
       transition:all .3s ease; z-index:9999;
       display:flex; align-items:center; gap:.5rem;
+      max-width: calc(100vw - 2rem);
     }
     .toast.show { transform:translateY(0); opacity:1; }
     .toast.error { background:#e74c3c; }
 
-    /* ── RESPONSIVE ── */
+    /* ══════════ RESPONSIVE ══════════ */
+
+    /* Tablet: keep sidebar visible but narrower, tighten spacing */
     @media (max-width: 1024px) {
+      .sidebar { width: 180px; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .search-box input { width: 160px; }
+      .admin-main { padding: 1.5rem; }
     }
+
+    /* Mobile / small tablet: sidebar becomes a slide-in drawer */
     @media (max-width: 768px) {
-      .sidebar { display: none; }
+      .topbar { padding: 0 1rem; }
+      .topbar-brand { font-size: 0.85rem; gap: 0.5rem; }
+      .topbar-brand img.brand-logo { width:56px; height:56px; margin-bottom:-18px; }
+      .topbar-link span { display: none; }
+      .btn-menu { display: flex; }
+
+      .sidebar {
+        position: fixed;
+        top: 60px; left: 0;
+        height: calc(100vh - 60px);
+        width: 250px;
+        max-width: 80vw;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 20px rgba(0,0,0,.2);
+      }
+      .sidebar.open { transform: translateX(0); }
+
       .admin-main { padding: 1.2rem 1rem; }
       .stats-row { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
       .stat-card { padding: 1rem; gap: 0.75rem; }
       .stat-card-num { font-size: 1.3rem; }
-      .topbar { padding: 0 1rem; }
-      .topbar-brand { font-size: 0.85rem; gap: 0.5rem; }
-      .topbar-link span { display: none; }
-      .section-header { flex-direction: column; align-items: flex-start; }
-      .header-actions { flex-wrap: wrap; }
+
+      .section-header { flex-direction: column; align-items: stretch; }
+      .header-actions { flex-wrap: wrap; width:100%; }
+      .search-box { flex: 1 1 100%; }
       .search-box input { width: 100%; }
-      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      table { min-width: 700px; }
-      th:nth-child(4), td:nth-child(4),
-      th:nth-child(5), td:nth-child(5) { display: none; }
+
+      .table-wrap { overflow-x: hidden; }
+      .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { min-width: 640px; }
+
+      .modal { max-width: 95vw; }
+      .detail-grid { grid-template-columns: 1fr; }
+
+      .toast { left: 1rem; right: 1rem; bottom: 1rem; max-width: none; }
     }
+
     @media (max-width: 480px) {
       .stats-row { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
       .stat-card { padding: 0.8rem; gap: 0.6rem; }
@@ -319,7 +378,10 @@
       .filter-tabs { gap: 0.25rem; }
       .tab-btn { font-size: 0.62rem; padding: 0.3rem 0.7rem; }
       .btn-sm { font-size: 0.65rem; padding: 0.35rem 0.7rem; }
-      .modal-box { width: 95vw; max-height: 90vh; overflow-y: auto; padding: 1.2rem; }
+      .modal-body { padding: 1rem; }
+      .modal-footer { padding: .85rem 1rem; }
+      table { min-width: 560px; }
+      th, td { padding: .6rem .65rem; }
     }
 
   </style>
@@ -328,14 +390,19 @@
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar-brand">
-    <img src="../images/logo.png" alt="Ascend Logo" class="brand-logo"/>
-    ASCEND <em>&nbsp;ADMIN</em>
+  <div class="topbar-left">
+    <button class="btn-menu" id="menuBtn" title="Menu" aria-label="Toggle menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="topbar-brand">
+      <img src="../images/logo.png" alt="Ascend Logo" class="brand-logo"/>
+      ASCEND <em>&nbsp;ADMIN</em>
+    </div>
   </div>
   <div class="topbar-right">
     <span class="topbar-badge" id="newBadge">0 New</span>
     <a href="../index.html" class="topbar-link" target="_blank">
-      <i class="fa-solid fa-arrow-up-right-from-square"></i> View Site
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>View Site</span>
     </a>
     <button class="btn-theme" id="themeBtn" title="Toggle theme">
       <i class="fa-solid fa-moon" id="themeIcon"></i>
@@ -345,8 +412,11 @@
 
 <div class="admin-layout">
 
+  <!-- Backdrop for mobile sidebar -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <p class="sidebar-section">Main</p>
     <a class="sidebar-link active" onclick="showTab('all')">
       <i class="fa-solid fa-table-list"></i> All Submissions
@@ -424,21 +494,23 @@
 
     <!-- Table -->
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Type</th>
-            <th>Name</th>
-            <th>Contact</th>
-            <th>Details</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="submissionsTable"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Details</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="submissionsTable"></tbody>
+        </table>
+      </div>
       <div class="empty-state" id="emptyState" style="display:none;">
         <i class="fa-solid fa-inbox"></i>
         <h3>No submissions yet</h3>
@@ -621,6 +693,7 @@ function showTab(type) {
   setText('tableTitle', titles[type] || 'Submissions');
   updateSidebarActive();
   renderTable();
+  closeSidebar();
 }
 
 function showStatus(status) {
@@ -629,11 +702,28 @@ function showStatus(status) {
   setText('tableTitle', status.charAt(0).toUpperCase() + status.slice(1) + ' Submissions');
   updateSidebarActive();
   renderTable();
+  closeSidebar();
 }
 
 function updateSidebarActive() {
   document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
 }
+
+/* ── MOBILE SIDEBAR DRAWER ── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarBackdrop').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+}
+function toggleSidebar() {
+  var sb = document.getElementById('sidebar');
+  if (sb.classList.contains('open')) closeSidebar(); else openSidebar();
+}
+document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
+document.getElementById('sidebarBackdrop').addEventListener('click', closeSidebar);
 
 /* ── MODAL ── */
 function openModal(id) {
@@ -809,7 +899,7 @@ document.getElementById('themeBtn').addEventListener('click', function() {
 
 /* ── KEYBOARD ── */
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModalDirect();
+  if (e.key === 'Escape') { closeModalDirect(); closeSidebar(); }
 });
 
 /* ── INIT ── */
