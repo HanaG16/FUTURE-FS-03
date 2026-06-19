@@ -1,7 +1,4 @@
-/* ============================================================
-   ASCEND TOUR & CAR RENTAL — style.css
-   Orange #E8470A | Black | Light & Dark Mode
-   ============================================================ */
+
 
 /* ── VARIABLES ─────────────────────────────────────────── */
 :root {
@@ -1013,4 +1010,121 @@ ul     { list-style:none; }
   .section { padding:4rem 0; }
   .hero-btns { flex-direction:column; }
   .hero-btns a { width:100%; text-align:center; }
+}
+
+/* ════════════════════════════════════════════════════
+   ENHANCED RESPONSIVE — All breakpoints
+   375px  = small phones (iPhone SE)
+   480px  = large phones
+   768px  = tablets portrait
+   1024px = tablets landscape / small laptops
+════════════════════════════════════════════════════ */
+
+/* ── Tablet landscape (max 1024px) ── */
+@media (max-width: 1024px) {
+  .hero-title { font-size: clamp(2.6rem, 6vw, 4rem); }
+  .hero-subtitle { font-size: 1rem; }
+  .hero-stats { gap: 2rem; }
+
+  .about-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .why-grid   { grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+  .contact-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+  .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .section { padding: 5rem 0; }
+}
+
+/* ── Tablet portrait (max 768px) ── */
+@media (max-width: 768px) {
+  /* NAV */
+  .nav-logo img { width: 75px; height: 75px; }
+
+  /* HERO */
+  .hero { min-height: 90vh; }
+  .hero-content { padding: 0 5%; text-align: center; }
+  .hero-tag { margin: 0 auto 1rem; }
+  .hero-title { font-size: clamp(2rem, 8vw, 3rem); }
+  .hero-subtitle { font-size: 0.95rem; max-width: 90%; margin-left: auto; margin-right: auto; }
+  .hero-btns { justify-content: center; gap: 0.8rem; }
+  .hero-stats { justify-content: center; flex-wrap: wrap; gap: 1.2rem; }
+  .stat-num  { font-size: 1.6rem; }
+  .stat-label { font-size: 0.65rem; }
+
+  /* SECTION HEADERS */
+  .section-header { text-align: center; }
+  .section-tag  { margin: 0 auto 0.75rem; }
+  .section-title { font-size: clamp(1.6rem, 5vw, 2.4rem); }
+
+  /* ORG TICKER */
+  .org-logo { height: 28px; }
+
+  /* ABOUT */
+  .about-grid  { grid-template-columns: 1fr; }
+  .about-img-main { max-height: 280px; object-fit: cover; border-radius: var(--radius); }
+  .about-image-block::before { display: none; }
+  .about-badge { right: 0; bottom: -1rem; }
+
+  /* WHY / VALUES / SERVICES */
+  .why-grid    { grid-template-columns: 1fr; }
+  .values-grid { grid-template-columns: 1fr 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+
+  /* FLEET PREVIEW */
+  .fleet-grid  { grid-template-columns: 1fr; }
+  .fleet-card  { max-width: 480px; margin: 0 auto; }
+
+  /* TESTIMONIALS */
+  .testimonials-grid { grid-template-columns: 1fr; }
+
+  /* CONTACT */
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-info { order: 2; }
+  .contact-form-box { order: 1; }
+  .contact-form-box { padding: 1.8rem 1.2rem; }
+
+  /* FOOTER */
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .footer-bottom { flex-direction: column; gap: 0.6rem; text-align: center; }
+  .footer-btm-links { justify-content: center; }
+}
+
+/* ── Large phones (max 480px) ── */
+@media (max-width: 480px) {
+  .container { width: 95%; }
+  .section   { padding: 4rem 0; }
+
+  /* HERO */
+  .hero { min-height: 100svh; }
+  .hero-title { font-size: clamp(1.8rem, 9vw, 2.6rem); }
+  .hero-btns  { flex-direction: column; align-items: stretch; }
+  .hero-btns a { width: 100%; text-align: center; }
+
+  /* ABOUT badge inside image */
+  .about-badge { font-size: 0.72rem; padding: 0.6rem 1rem; }
+
+  /* VALUES — stack on small phones */
+  .values-grid { grid-template-columns: 1fr; }
+
+  /* FLEET cards */
+  .fleet-card-img { height: 180px; }
+
+  /* CONTACT FORM */
+  .form-row { grid-template-columns: 1fr; }
+  .btn-submit { width: 100%; }
+
+  /* FOOTER */
+  .footer-social { justify-content: center; }
+  .footer-links  { text-align: center; }
+}
+
+/* ── Small phones (max 375px) ── */
+@media (max-width: 375px) {
+  .hero-title { font-size: 1.7rem; }
+  .nav-logo img { width: 60px; height: 60px; }
+  .section-title { font-size: 1.5rem; }
+  .btn-submit, .btn-primary, .btn-outline { font-size: 0.8rem; padding: 0.75rem 1.2rem; }
+  .stat-num { font-size: 1.4rem; }
+  .hero-stats { gap: 1rem; }
 }

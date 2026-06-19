@@ -630,3 +630,78 @@
   .filter-btns { gap: 0.35rem; }
   .filter-btn { font-size: 0.68rem; padding: 0.4rem 0.85rem; }
 }
+
+/* ════════════════════════════════════════════════════
+   ENHANCED RESPONSIVE — fleet.css
+════════════════════════════════════════════════════ */
+
+/* ── Tablet landscape (max 1024px) ── */
+@media (max-width: 1024px) {
+  .booking-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .vehicle-picker { max-height: 320px; overflow-y: auto; }
+  .fcard-specs    { grid-template-columns: repeat(2, 1fr); }
+  .fleet-hero-title { font-size: clamp(2rem, 5vw, 3rem); }
+}
+
+/* ── Tablet portrait (max 768px) ── */
+@media (max-width: 768px) {
+  /* FLEET HERO */
+  .fleet-hero { min-height: 55vh; text-align: center; }
+  .fleet-hero-content { padding: 0 5%; }
+  .fleet-hero-title   { font-size: clamp(1.8rem, 7vw, 2.8rem); }
+  .fleet-hero-sub     { font-size: 0.95rem; }
+  .fleet-hero-stats   { justify-content: center; flex-wrap: wrap; gap: 1rem; }
+  .fhs-item           { flex: 0 0 40%; text-align: center; }
+
+  /* FILTER BAR */
+  .fleet-filter-bar { top: 68px; padding: 0.6rem 5%; }
+  .filter-inner     { gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+  .filter-btn       { font-size: 0.72rem; padding: 0.4rem 0.9rem; }
+
+  /* FLEET GRID */
+  .fleet-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .fcard      { max-width: 500px; margin: 0 auto; }
+  .fcard-img  { height: 200px; }
+  .fcard-specs { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+
+  /* BOOKING FORM */
+  .booking-grid   { grid-template-columns: 1fr; }
+  .booking-form   { padding: 1.5rem 1.2rem; }
+  .bform-row      { grid-template-columns: 1fr; }
+  .drive-options  { flex-direction: column; gap: 0.75rem; }
+  #bSubmitBtn     { width: 100%; }
+
+  /* VEHICLE PICKER */
+  .vehicle-picker { grid-template-columns: repeat(2, 1fr); max-height: 260px; }
+  .vp-card        { padding: 0.6rem; }
+  .vp-card img    { height: 60px; }
+  .vp-name        { font-size: 0.72rem; }
+}
+
+/* ── Large phones (max 480px) ── */
+@media (max-width: 480px) {
+  .fleet-hero { min-height: 60vh; }
+  .fleet-hero-title { font-size: 1.8rem; }
+
+  .fhs-item { flex: 0 0 45%; }
+  .fhs-num  { font-size: 1.6rem; }
+
+  .filter-btn { font-size: 0.68rem; padding: 0.38rem 0.8rem; }
+
+  .fcard-specs { grid-template-columns: 1fr 1fr; }
+  .fcard-btns  { flex-direction: column; gap: 0.6rem; }
+  .fcard-btns .btn-primary,
+  .fcard-btns .btn-outline { width: 100%; text-align: center; }
+
+  .vehicle-picker { grid-template-columns: 1fr 1fr; }
+  .booking-form h2 { font-size: 1.3rem; }
+}
+
+/* ── Small phones (max 375px) ── */
+@media (max-width: 375px) {
+  .fleet-hero-title { font-size: 1.6rem; }
+  .filter-btn { font-size: 0.65rem; padding: 0.35rem 0.7rem; }
+  .fcard-btns .btn-primary,
+  .fcard-btns .btn-outline { font-size: 0.8rem; }
+  .vehicle-picker { grid-template-columns: 1fr; }
+}
