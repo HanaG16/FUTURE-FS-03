@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --orange:#E8470A; --orange-glow:rgba(232,71,10,0.12);
@@ -97,13 +98,16 @@
       <div class="login-sub">Restricted Access</div>
     </div>
     <div class="login-body">
-      <div class="error-msg" id="errorMsg"><i class="fa-solid fa-triangle-exclamation"></i><span id="errorText"></span></div>
+      <div class="error-msg" id="errorMsg">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span id="errorText"></span>
+      </div>
       <form id="loginForm">
         <div class="field">
-          <label>Username</label>
+          <label>Email</label>
           <div class="field-input-wrap">
-            <i class="fa-solid fa-user icon-left"></i>
-            <input type="text" id="username" autocomplete="username" required/>
+            <i class="fa-solid fa-envelope icon-left"></i>
+            <input type="email" id="email" autocomplete="email" required placeholder="your@email.com"/>
           </div>
         </div>
         <div class="field">
@@ -111,7 +115,9 @@
           <div class="field-input-wrap">
             <i class="fa-solid fa-lock icon-left"></i>
             <input type="password" id="password" autocomplete="current-password" required style="padding-right:2.4rem;"/>
-            <button type="button" class="toggle-pw" id="togglePw"><i class="fa-solid fa-eye" id="togglePwIcon"></i></button>
+            <button type="button" class="toggle-pw" id="togglePw">
+              <i class="fa-solid fa-eye" id="togglePwIcon"></i>
+            </button>
           </div>
         </div>
         <button type="submit" class="btn-login" id="loginBtn">
@@ -120,73 +126,45 @@
       </form>
     </div>
     <div class="login-footer">
-      <i class="fa-solid fa-shield-halved"></i>Session expires after 2 hours of login
+      <i class="fa-solid fa-shield-halved"></i>Secured by Supabase Auth
     </div>
   </div>
 
 <script>
 /* ════════════════════════════════════════════
-   ADMIN LOGIN — client-side gate
-   NOTE: this is a static page with no backend,
-   so this deters casual access but is NOT a
-   substitute for real server-side auth.
+   ASCEND ADMIN LOGIN — Supabase Auth
+   Password verified server-side by Supabase.
+   Nothing sensitive lives in this file.
 ════════════════════════════════════════════ */
 
-/* ── CONFIG ── */
-var ADMIN_USERNAME = 'admin';
-/* SHA-256("ascend_2026_salt_" + password). Change PASSWORD_HASH if you change the password. */
-var SALT = 'ascend_2026_salt_';
-var PASSWORD_HASH = '9a2a833406f0e23978c18786fb1a3a7c6ec127875b2512165ce8dec75d9eaf3b';
+var SUPABASE_URL     = 'https://vnxdlwfguobtogmphyio.supabase.co';
+var SUPABASE_ANON    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueGRsd2ZndW9idG9nbXBoeWlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzA3MjYsImV4cCI6MjA5Nzc0NjcyNn0.gNewGYvlaIyFazWe4vHn72alEn5yEPUqxh7QvqQkZcw';
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-var SESSION_KEY      = 'ascend_admin_session';
-var SESSION_LENGTH   = 2 * 60 * 60 * 1000;       // 2 hours
-var ATTEMPTS_KEY      = 'ascend_login_attempts';
-var MAX_ATTEMPTS      = 5;
-var LOCKOUT_LENGTH    = 15 * 60 * 1000;          // 15 minutes
+/* Brute-force lockout (client-side layer on top of Supabase's own rate limiting) */
+var ATTEMPTS_KEY   = 'ascend_login_attempts';
+var MAX_ATTEMPTS   = 5;
+var LOCKOUT_LENGTH = 15 * 60 * 1000; // 15 min
 
-/* If already logged in, skip straight to dashboard */
-(function () {
-  try {
-    var raw = sessionStorage.getItem(SESSION_KEY);
-    if (raw) {
-      var s = JSON.parse(raw);
-      if (s.expires && Date.now() < s.expires) {
-        window.location.replace('admin.html');
-      }
-    }
-  } catch (e) {}
-})();
-
-async function sha256(str) {
-  var enc = new TextEncoder().encode(str);
-  var buf = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(buf)).map(function (b) {
-    return b.toString(16).padStart(2, '0');
-  }).join('');
-}
+/* If already logged in, skip to dashboard */
+sb.auth.getSession().then(function(res) {
+  if (res.data && res.data.session) {
+    window.location.replace('admin.html');
+  }
+});
 
 function getAttempts() {
-  try {
-    var raw = localStorage.getItem(ATTEMPTS_KEY);
-    return raw ? JSON.parse(raw) : { count: 0, lockedUntil: 0 };
-  } catch (e) { return { count: 0, lockedUntil: 0 }; }
+  try { var r = localStorage.getItem(ATTEMPTS_KEY); return r ? JSON.parse(r) : { count:0, lockedUntil:0 }; }
+  catch(e) { return { count:0, lockedUntil:0 }; }
 }
-function setAttempts(obj) {
-  localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(obj));
-}
+function setAttempts(obj) { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(obj)); }
+function formatMinutes(ms) { return Math.ceil(ms / 60000); }
 
 function showError(msg) {
-  var box = document.getElementById('errorMsg');
   document.getElementById('errorText').textContent = msg;
-  box.classList.add('show');
+  document.getElementById('errorMsg').classList.add('show');
 }
-function hideError() {
-  document.getElementById('errorMsg').classList.remove('show');
-}
-
-function formatMinutes(ms) {
-  return Math.ceil(ms / 60000);
-}
+function hideError() { document.getElementById('errorMsg').classList.remove('show'); }
 
 function checkLockState() {
   var a = getAttempts();
@@ -200,54 +178,48 @@ function checkLockState() {
   return true;
 }
 
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   hideError();
-
   if (!checkLockState()) return;
 
   var btn = document.getElementById('loginBtn');
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
 
-  var user = document.getElementById('username').value.trim();
-  var pass = document.getElementById('password').value;
-  var hash = await sha256(SALT + pass);
+  var email    = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value;
 
-  if (user === ADMIN_USERNAME && hash === PASSWORD_HASH) {
-    // success — reset attempts, create session
+  var result = await sb.auth.signInWithPassword({ email: email, password: password });
+
+  if (!result.error && result.data && result.data.session) {
+    /* ✅ Success — Supabase stores the session automatically */
     setAttempts({ count: 0, lockedUntil: 0 });
-    var token = (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + '-' + Math.random()));
-    var session = { token: token, expires: Date.now() + SESSION_LENGTH };
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
     window.location.replace('admin.html');
     return;
   }
 
-  // failure — increment attempts
+  /* ❌ Failure */
+  document.getElementById('password').value = '';
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+
   var a = getAttempts();
   a.count = (a.count || 0) + 1;
   if (a.count >= MAX_ATTEMPTS) {
     a.lockedUntil = Date.now() + LOCKOUT_LENGTH;
     a.count = 0;
-  }
-  setAttempts(a);
-
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
-
-  if (a.lockedUntil && Date.now() < a.lockedUntil) {
-    showError('Too many failed attempts. Try again in ' + formatMinutes(a.lockedUntil - Date.now()) + ' min.');
+    setAttempts(a);
+    showError('Too many failed attempts. Try again in 15 min.');
     btn.disabled = true;
   } else {
+    setAttempts(a);
     var remaining = MAX_ATTEMPTS - a.count;
-    showError('Incorrect username or password. ' + remaining + ' attempt(s) left.');
+    showError('Incorrect email or password. ' + remaining + ' attempt(s) left.');
   }
-
-  document.getElementById('password').value = '';
 });
 
-document.getElementById('togglePw').addEventListener('click', function () {
+document.getElementById('togglePw').addEventListener('click', function() {
   var input = document.getElementById('password');
   var icon  = document.getElementById('togglePwIcon');
   if (input.type === 'password') {
@@ -260,7 +232,6 @@ document.getElementById('togglePw').addEventListener('click', function () {
 });
 
 checkLockState();
-// Refresh the lock countdown message every 10s if locked
 setInterval(checkLockState, 10000);
 </script>
 </body>
