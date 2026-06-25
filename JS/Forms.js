@@ -1,76 +1,38 @@
 /* ============================================================
-   ASCEND — Forms.js   (JSONBin.io — single PUT per submit)
+   ASCEND — Forms.js   (Supabase backend)
    ============================================================ */
 
-var JSONBIN_BIN_ID  = '6a2b407bf5f4af5e29e2e86a';
-var JSONBIN_API_KEY = '$2a$10$1lnq9.VdrdelJYhaiT2ON.9DDk96pPL.3WshQXlnWFf47wm9MmD8u';
-var JSONBIN_BASE    = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
+var SUPABASE_URL  = 'https://vnxdlwfguobtogmphyio.supabase.co';
+var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueGRsd2ZndW9idG9nbXBoeWlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzA3MjYsImV4cCI6MjA5Nzc0NjcyNn0.gNewGYvlaIyFazWe4vHn72alEn5yEPUqxh7QvqQkZcw';
 
-/* ── FETCH with timeout ────────────────────────────────── */
-function fetchWithTimeout(url, options, ms) {
-  ms = ms || 10000;
-  var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  var timer = controller
-    ? setTimeout(function() { controller.abort(); }, ms)
-    : null;
-  var opts = controller
-    ? Object.assign({}, options, { signal: controller.signal })
-    : options;
-  return fetch(url, opts).finally(function() { if (timer) clearTimeout(timer); });
-}
-
-/* ── READ current bin ──────────────────────────────────── */
-function readBin() {
-  return fetchWithTimeout(JSONBIN_BASE + '/latest', {
-    headers: { 'X-Master-Key': JSONBIN_API_KEY }
-  }).then(function(r) {
-    if (!r.ok) throw new Error('Read failed: ' + r.status);
-    return r.json();
-  }).then(function(res) {
-    var subs = res && res.record && Array.isArray(res.record.submissions)
-      ? res.record.submissions : [];
-    return subs;
-  });
-}
-
-/* ── WRITE full list back ──────────────────────────────── */
-function writeBin(list) {
-  return fetchWithTimeout(JSONBIN_BASE, {
-    method: 'PUT',
-    headers: {
-      'Content-Type':     'application/json',
-      'X-Master-Key':     JSONBIN_API_KEY,
-      'X-Bin-Versioning': 'false'
-    },
-    body: JSON.stringify({ submissions: list })
-  }).then(function(r) {
-    if (!r.ok) throw new Error('Write failed: ' + r.status);
-    return r.json();
-  });
-}
-
-/* ── SAVE a new submission ─────────────────────────────── */
+/* ── SAVE a new submission to Supabase ─────────────────────
+   One single INSERT — no read-then-write needed.
+   The anon key can only INSERT (not read/update/delete)
+   thanks to Row Level Security on the server.
+──────────────────────────────────────────────────────────── */
 function saveSubmission(type, data, onSuccess, onError) {
-  var entry = {
-    id:        Date.now(),
-    type:      type,
-    status:    'new',
-    timestamp: new Date().toISOString(),
-    data:      data
-  };
-
-  readBin()
-    .then(function(list) {
-      list.unshift(entry);
-      return writeBin(list);
+  fetch(SUPABASE_URL + '/rest/v1/submissions', {
+    method: 'POST',
+    headers: {
+      'apikey':        SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'Content-Type':  'application/json',
+      'Prefer':        'return=minimal'
+    },
+    body: JSON.stringify({
+      type:   type,    // 'booking' or 'quote'
+      status: 'new',
+      data:   data     // all form fields as an object
     })
-    .then(function() {
-      onSuccess && onSuccess();
-    })
-    .catch(function(err) {
-      console.error('JSONBin error:', err);
-      onError && onError(err);
-    });
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Supabase error: ' + r.status);
+    onSuccess && onSuccess();
+  })
+  .catch(function(err) {
+    console.error('Submission error:', err);
+    onError && onError(err);
+  });
 }
 
 /* ── VALIDATE ──────────────────────────────────────────── */
@@ -85,7 +47,7 @@ function validateForm(form) {
       valid = false;
       f.style.borderColor = '#e74c3c';
       if (!firstInvalid) firstInvalid = f;
-      f.addEventListener('input', function() { f.style.borderColor = ''; }, { once: true });
+      f.addEventListener('input',  function() { f.style.borderColor = ''; }, { once: true });
       f.addEventListener('change', function() { f.style.borderColor = ''; }, { once: true });
     }
   });
@@ -102,7 +64,7 @@ function validateForm(form) {
 /* ── Inline warning banner ─────────────────────────────── */
 function showInlineWarning(form) {
   var existing = form.querySelector('.form-warning-banner');
-  if (existing) return; // already showing
+  if (existing) return;
 
   var banner = document.createElement('div');
   banner.className = 'form-warning-banner';
@@ -201,16 +163,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
       var driveEl = bForm.querySelector('[name="driveOption"]:checked');
       var data = {
-        firstName:      (document.getElementById('bFirstName')      || {}).value || '',
-        lastName:       (document.getElementById('bLastName')        || {}).value || '',
-        phone:          (document.getElementById('bPhone')           || {}).value || '',
-        email:          (document.getElementById('bEmail')           || {}).value || '',
-        vehicle:        (document.getElementById('bVehicle')         || {}).value || '',
+        firstName:      (document.getElementById('bFirstName')     || {}).value || '',
+        lastName:       (document.getElementById('bLastName')       || {}).value || '',
+        phone:          (document.getElementById('bPhone')          || {}).value || '',
+        email:          (document.getElementById('bEmail')          || {}).value || '',
+        vehicle:        (document.getElementById('bVehicle')        || {}).value || '',
         driveOption:    driveEl ? driveEl.value : '',
-        pickupDate:     (document.getElementById('bPickupDate')      || {}).value || '',
-        returnDate:     (document.getElementById('bReturnDate')      || {}).value || '',
-        pickupLocation: (document.getElementById('bPickupLocation')  || {}).value || '',
-        notes:          (bForm.querySelector('textarea')              || {}).value || ''
+        pickupDate:     (document.getElementById('bPickupDate')     || {}).value || '',
+        returnDate:     (document.getElementById('bReturnDate')     || {}).value || '',
+        pickupLocation: (document.getElementById('bPickupLocation') || {}).value || '',
+        notes:          (bForm.querySelector('textarea')             || {}).value || ''
       };
 
       setBtn(bBtn, 'loading');
