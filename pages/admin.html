@@ -4,43 +4,19 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Dashboard — Ascend</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    /* ── SESSION GATE ──
-       Runs before the page paints. Blocks/redirects unauthenticated
-       visitors straight to the login page. See login.html for how
-       sessions are created (hashed password + expiring token). */
-    (function() {
-      var SESSION_KEY = 'ascend_admin_session';
-      try {
-        var raw = sessionStorage.getItem(SESSION_KEY);
-        if (!raw) { window.location.replace('login.html'); return; }
-        var s = JSON.parse(raw);
-        if (!s.token || !s.expires || Date.now() > s.expires) {
-          sessionStorage.removeItem(SESSION_KEY);
-          window.location.replace('login.html');
-        }
-      } catch (e) {
-        window.location.replace('login.html');
-      }
-    })();
+  /* ── SUPABASE INIT + SESSION GATE ──
+     Runs before page paints. Hides body until auth is confirmed,
+     then redirects to login if no valid session exists. */
+  var SUPABASE_URL  = 'https://vnxdlwfguobtogmphyio.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZueGRsd2ZndW9idG9nbXBoeWlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzA3MjYsImV4cCI6MjA5Nzc0NjcyNn0.gNewGYvlaIyFazWe4vHn72alEn5yEPUqxh7QvqQkZcw';
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  document.write('<style>body{visibility:hidden}</style>');
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script>
-    /* ── SESSION GATE ── runs before page paints, kicks out anyone without a valid session */
-    (function () {
-      try {
-        var raw = sessionStorage.getItem('ascend_admin_session');
-        if (!raw) { window.location.replace('login.html'); return; }
-        var s = JSON.parse(raw);
-        if (!s.token || !s.expires || Date.now() > s.expires) {
-          sessionStorage.removeItem('ascend_admin_session');
-          window.location.replace('login.html');
-        }
-      } catch (e) { window.location.replace('login.html'); }
-    })();
-  </script>
   <style>
     :root {
       --orange: #E8470A; --orange-glow: rgba(232,71,10,0.12);
@@ -58,15 +34,10 @@
 
     /* ── TOP BAR ── */
     .topbar {
-      background: #0A0A0A;
-      padding: 0 2rem;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: #0A0A0A; padding: 0 2rem; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
       position: sticky; top:0; z-index:100;
-      border-bottom: 1px solid rgba(232,71,10,0.3);
-      gap: .5rem;
+      border-bottom: 1px solid rgba(232,71,10,0.3); gap: .5rem;
     }
     .topbar-left { display:flex; align-items:center; gap:.75rem; min-width:0; flex-shrink:1; }
     .topbar-brand {
@@ -87,8 +58,7 @@
     .topbar-link {
       font-family:'Montserrat',sans-serif; font-size:.72rem; font-weight:600;
       letter-spacing:.08em; text-transform:uppercase;
-      color:rgba(255,255,255,.5); text-decoration:none; transition:color .2s;
-      white-space:nowrap;
+      color:rgba(255,255,255,.5); text-decoration:none; transition:color .2s; white-space:nowrap;
     }
     .topbar-link:hover { color:#fff; }
     .btn-theme {
@@ -98,11 +68,8 @@
       cursor:pointer; font-size:.8rem; transition:all .2s; flex-shrink:0;
     }
     .btn-theme:hover { border-color:var(--orange); color:var(--orange); }
-
-    /* Hamburger (hidden on desktop) */
     .btn-menu {
-      display:none;
-      background:transparent; border:1px solid rgba(255,255,255,.2);
+      display:none; background:transparent; border:1px solid rgba(255,255,255,.2);
       color:#fff; width:36px; height:36px; border-radius:6px;
       align-items:center; justify-content:center;
       cursor:pointer; font-size:1rem; flex-shrink:0;
@@ -114,15 +81,10 @@
 
     /* ── SIDEBAR ── */
     .sidebar {
-      width: 220px; flex-shrink:0;
-      background: var(--bg-card);
-      border-right: 1px solid var(--border);
-      padding: 1.5rem 0;
-      position: sticky; top:60px;
-      height: calc(100vh - 60px);
-      overflow-y: auto;
-      transition: transform .25s ease;
-      z-index: 90;
+      width:220px; flex-shrink:0; background:var(--bg-card);
+      border-right:1px solid var(--border); padding:1.5rem 0;
+      position:sticky; top:60px; height:calc(100vh - 60px);
+      overflow-y:auto; transition:transform .25s ease; z-index:90;
     }
     .sidebar-section {
       font-family:'Montserrat',sans-serif; font-size:.6rem; font-weight:700;
@@ -130,8 +92,7 @@
       padding:.5rem 1.4rem; margin-top:1rem;
     }
     .sidebar-link {
-      display:flex; align-items:center; gap:.75rem;
-      padding:.7rem 1.4rem;
+      display:flex; align-items:center; gap:.75rem; padding:.7rem 1.4rem;
       font-family:'Montserrat',sans-serif; font-size:.78rem; font-weight:600;
       color:var(--text-muted); cursor:pointer; transition:all .2s;
       border-left:3px solid transparent; text-decoration:none;
@@ -143,27 +104,21 @@
       margin-left:auto; background:var(--orange); color:#fff;
       font-size:.58rem; font-weight:700; padding:.15rem .45rem; border-radius:50px;
     }
-
-    /* Backdrop for mobile drawer */
     .sidebar-backdrop {
-      display:none;
-      position:fixed; inset:0; top:60px;
-      background:rgba(0,0,0,.45);
-      z-index:80;
+      display:none; position:fixed; inset:0; top:60px;
+      background:rgba(0,0,0,.45); z-index:80;
     }
     .sidebar-backdrop.open { display:block; }
 
     /* ── MAIN ── */
     .admin-main { flex:1; padding:2rem; overflow-x:hidden; min-width:0; }
 
-    /* ── STATS CARDS ── */
+    /* ── STATS ── */
     .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
     .stat-card {
       background:var(--bg-card); border:1px solid var(--border);
       border-radius:var(--radius); padding:1.2rem 1.4rem;
-      display:flex; align-items:center; gap:1rem;
-      box-shadow:var(--shadow);
-      min-width:0;
+      display:flex; align-items:center; gap:1rem; box-shadow:var(--shadow); min-width:0;
     }
     .stat-card-icon {
       width:44px; height:44px; border-radius:var(--radius);
@@ -174,10 +129,7 @@
     .stat-card-icon.green  { background:rgba(39,174,96,.12); color:#27ae60; }
     .stat-card-icon.blue   { background:rgba(41,128,185,.12); color:#2980b9; }
     .stat-card-icon.purple { background:rgba(142,68,173,.12); color:#8e44ad; }
-    .stat-card-num {
-      font-family:'Montserrat',sans-serif; font-size:1.6rem; font-weight:900;
-      color:var(--text); line-height:1;
-    }
+    .stat-card-num { font-family:'Montserrat',sans-serif; font-size:1.6rem; font-weight:900; color:var(--text); line-height:1; }
     .stat-card-label { font-size:.72rem; color:var(--text-muted); font-weight:600; margin-top:.2rem; }
 
     /* ── SECTION HEADER ── */
@@ -185,40 +137,21 @@
       display:flex; align-items:center; justify-content:space-between;
       margin-bottom:1.2rem; flex-wrap:wrap; gap:.75rem;
     }
-    .section-title {
-      font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; color:var(--text);
-    }
+    .section-title { font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; color:var(--text); }
     .header-actions { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
-
     .btn-sm {
       font-family:'Montserrat',sans-serif; font-size:.7rem; font-weight:700;
-      letter-spacing:.07em; text-transform:uppercase;
-      padding:.4rem .9rem; border-radius:var(--radius);
-      border:1.5px solid var(--border); color:var(--text-muted); background:transparent;
-      cursor:pointer; transition:all .2s; white-space:nowrap;
+      letter-spacing:.07em; text-transform:uppercase; padding:.4rem .9rem;
+      border-radius:var(--radius); border:1.5px solid var(--border);
+      color:var(--text-muted); background:transparent; cursor:pointer; transition:all .2s; white-space:nowrap;
     }
     .btn-sm:hover { border-color:var(--orange); color:var(--orange); }
     .btn-sm.orange { border-color:var(--orange); color:var(--orange); }
     .btn-sm.danger { border-color:#e74c3c; color:#e74c3c; }
     .btn-sm.danger:hover { background:#e74c3c; color:#fff; }
 
-    /* ── FILTER TABS ── */
-    .filter-tabs { display:flex; gap:.35rem; flex-wrap:wrap; }
-    .tab-btn {
-      font-family:'Montserrat',sans-serif; font-size:.68rem; font-weight:700;
-      letter-spacing:.07em; text-transform:uppercase;
-      padding:.35rem .85rem; border-radius:50px;
-      border:1.5px solid var(--border); color:var(--text-muted); background:transparent;
-      cursor:pointer; transition:all .2s;
-    }
-    .tab-btn.active { background:var(--orange); border-color:var(--orange); color:#fff; }
-    .tab-btn:hover:not(.active) { border-color:var(--orange); color:var(--orange); }
-
     /* ── SEARCH ── */
-    .search-box {
-      position:relative;
-      flex: 1 1 200px;
-    }
+    .search-box { position:relative; flex:1 1 200px; }
     .search-box input {
       background:var(--bg); border:1.5px solid var(--border);
       border-radius:var(--radius); padding:.38rem .85rem .38rem 2rem;
@@ -229,42 +162,32 @@
     .search-box i { position:absolute; left:.65rem; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:.8rem; }
 
     /* ── TABLE ── */
-    .table-wrap {
-      background:var(--bg-card); border:1px solid var(--border);
-      border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
-    }
+    .table-wrap { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
     .table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
     table { width:100%; border-collapse:collapse; }
     thead { background:var(--bg); border-bottom:1px solid var(--border); }
     th {
       padding:.75rem 1rem; text-align:left;
       font-family:'Montserrat',sans-serif; font-size:.65rem; font-weight:700;
-      letter-spacing:.12em; text-transform:uppercase; color:var(--text-light);
-      white-space:nowrap;
+      letter-spacing:.12em; text-transform:uppercase; color:var(--text-light); white-space:nowrap;
     }
     td { padding:.85rem 1rem; border-bottom:1px solid var(--border); font-size:.83rem; vertical-align:middle; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:var(--orange-glow); }
-
     .td-name { font-weight:600; color:var(--text); }
-    .td-sub  { font-size:.72rem; color:var(--text-muted); margin-top:2px; }
 
-    /* Status badges */
+    /* Badges */
     .status-badge {
       font-family:'Montserrat',sans-serif; font-size:.62rem; font-weight:700;
-      letter-spacing:.08em; text-transform:uppercase;
-      padding:.22rem .65rem; border-radius:50px; white-space:nowrap;
+      letter-spacing:.08em; text-transform:uppercase; padding:.22rem .65rem; border-radius:50px; white-space:nowrap;
     }
     .status-new       { background:rgba(232,71,10,.12); color:var(--orange); }
     .status-read      { background:rgba(41,128,185,.12); color:#2980b9; }
     .status-confirmed { background:rgba(39,174,96,.12);  color:#27ae60; }
     .status-cancelled { background:rgba(231,76,60,.12);  color:#e74c3c; }
-
-    /* Type badge */
     .type-badge {
       font-family:'Montserrat',sans-serif; font-size:.6rem; font-weight:700;
-      letter-spacing:.08em; text-transform:uppercase;
-      padding:.18rem .55rem; border-radius:50px;
+      letter-spacing:.08em; text-transform:uppercase; padding:.18rem .55rem; border-radius:50px;
     }
     .type-booking { background:rgba(142,68,173,.12); color:#8e44ad; }
     .type-quote   { background:rgba(41,128,185,.12); color:#2980b9; }
@@ -281,62 +204,42 @@
     .act-btn.danger:hover { border-color:#e74c3c; color:#e74c3c; }
 
     /* Empty state */
-    .empty-state {
-      text-align:center; padding:4rem 2rem; color:var(--text-muted);
-    }
+    .empty-state { text-align:center; padding:4rem 2rem; color:var(--text-muted); }
     .empty-state i { font-size:2.5rem; color:var(--border); margin-bottom:1rem; display:block; }
     .empty-state h3 { font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; margin-bottom:.4rem; }
     .empty-state p  { font-size:.85rem; }
 
-    /* ── MOBILE CARD LIST (replaces table on small screens) ── */
+    /* ── MOBILE CARDS ── */
     .cards-list { display:none; flex-direction:column; gap:.75rem; }
-    .sub-card {
-      background:var(--bg-card); border:1px solid var(--border);
-      border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow);
-    }
-    .sub-card-top {
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:.6rem; gap:.5rem;
-    }
+    .sub-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow); }
+    .sub-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:.6rem; gap:.5rem; }
     .sub-card-badges { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
     .sub-card-name { font-family:'Montserrat',sans-serif; font-weight:700; font-size:.92rem; color:var(--text); margin-bottom:.5rem; }
-    .sub-card-row {
-      display:flex; align-items:flex-start; gap:.5rem;
-      font-size:.8rem; color:var(--text-muted); margin-bottom:.3rem;
-    }
+    .sub-card-row { display:flex; align-items:flex-start; gap:.5rem; font-size:.8rem; color:var(--text-muted); margin-bottom:.3rem; }
     .sub-card-row i { width:14px; text-align:center; color:var(--text-light); margin-top:.15rem; flex-shrink:0; }
-    .sub-card-actions {
-      display:flex; gap:.5rem; margin-top:.75rem; padding-top:.75rem;
-      border-top:1px solid var(--border);
-    }
+    .sub-card-actions { display:flex; gap:.5rem; margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--border); }
     .sub-card-actions .act-btn { width:34px; height:34px; }
 
     /* ── MODAL ── */
     .modal-overlay {
       position:fixed; inset:0; background:rgba(0,0,0,.55);
-      z-index:999; display:none; align-items:center; justify-content:center;
-      padding:1rem;
+      z-index:999; display:none; align-items:center; justify-content:center; padding:1rem;
     }
     .modal-overlay.open { display:flex; }
     .modal {
       background:var(--bg-card); border-radius:var(--radius);
       width:100%; max-width:560px; max-height:90vh; overflow-y:auto;
-      box-shadow:0 20px 60px rgba(0,0,0,.25);
-      animation:modalIn .25s ease;
+      box-shadow:0 20px 60px rgba(0,0,0,.25); animation:modalIn .25s ease;
     }
     @keyframes modalIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
     .modal-header {
-      padding:1.2rem 1.5rem;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid var(--border);
-      background:var(--orange);
-      gap:.75rem;
+      padding:1.2rem 1.5rem; display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid var(--border); background:var(--orange); gap:.75rem;
     }
     .modal-header h3 { font-family:'Montserrat',sans-serif; font-size:1rem; font-weight:700; color:#fff; min-width:0; overflow-wrap:anywhere; }
     .modal-close { background:transparent; border:none; color:rgba(255,255,255,.7); font-size:1.1rem; cursor:pointer; flex-shrink:0; }
     .modal-close:hover { color:#fff; }
     .modal-body { padding:1.5rem; }
-
     .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
     .detail-item { min-width:0; }
     .detail-item label {
@@ -346,14 +249,10 @@
     .detail-item p { font-size:.88rem; color:var(--text); font-weight:500; overflow-wrap:anywhere; }
     .detail-full { grid-column:1/-1; }
     .detail-divider { grid-column:1/-1; border:none; border-top:1px solid var(--border); margin:.25rem 0; }
-
     .modal-footer {
-      padding:1rem 1.5rem;
-      border-top:1px solid var(--border);
+      padding:1rem 1.5rem; border-top:1px solid var(--border);
       display:flex; gap:.5rem; justify-content:flex-end; flex-wrap:wrap;
     }
-
-    /* Status select */
     .status-select {
       font-family:'Montserrat',sans-serif; font-size:.72rem; font-weight:600;
       padding:.35rem .7rem; border:1.5px solid var(--border); border-radius:var(--radius);
@@ -361,92 +260,68 @@
     }
     .status-select:focus { border-color:var(--orange); }
 
-    /* Toast notification */
+    /* Toast */
     .toast {
-      position:fixed; bottom:2rem; right:2rem; left:auto;
-      background:#27ae60; color:#fff;
+      position:fixed; bottom:2rem; right:2rem; left:auto; background:#27ae60; color:#fff;
       font-family:'Montserrat',sans-serif; font-size:.78rem; font-weight:600;
-      padding:.75rem 1.2rem; border-radius:var(--radius);
-      box-shadow:0 4px 20px rgba(0,0,0,.2);
-      transform:translateY(80px); opacity:0;
-      transition:all .3s ease; z-index:9999;
-      display:flex; align-items:center; gap:.5rem;
-      max-width: calc(100vw - 2rem);
+      padding:.75rem 1.2rem; border-radius:var(--radius); box-shadow:0 4px 20px rgba(0,0,0,.2);
+      transform:translateY(80px); opacity:0; transition:all .3s ease; z-index:9999;
+      display:flex; align-items:center; gap:.5rem; max-width:calc(100vw - 2rem);
     }
     .toast.show { transform:translateY(0); opacity:1; }
     .toast.error { background:#e74c3c; }
 
-    /* ══════════ RESPONSIVE ══════════ */
-
-    /* Tablet: keep sidebar visible but narrower, tighten spacing */
+    /* ══ RESPONSIVE ══ */
     @media (max-width: 1024px) {
-      .sidebar { width: 180px; }
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .search-box input { width: 160px; }
-      .admin-main { padding: 1.5rem; }
+      .sidebar { width:180px; }
+      .stats-row { grid-template-columns:repeat(2,1fr); }
+      .search-box input { width:160px; }
+      .admin-main { padding:1.5rem; }
     }
-
-    /* Mobile / small tablet: sidebar becomes a slide-in drawer */
     @media (max-width: 768px) {
-      .topbar { padding: 0 0.75rem; gap: 0.4rem; }
-      .topbar-brand { font-size: 0.78rem; gap: 0.4rem; }
+      .topbar { padding:0 0.75rem; gap:0.4rem; }
+      .topbar-brand { font-size:0.78rem; gap:0.4rem; }
       .topbar-brand img.brand-logo { width:44px; height:44px; margin-bottom:-12px; }
-      .topbar-right { gap: 0.5rem; }
-      .topbar-link span { display: none; }
-      .topbar-badge { font-size: 0.58rem; padding: 0.22rem 0.55rem; }
-      .btn-theme { width: 28px; height: 28px; font-size: 0.72rem; }
-      .btn-menu { display: flex; width: 32px; height: 32px; }
-
+      .topbar-right { gap:0.5rem; }
+      .topbar-link span { display:none; }
+      .topbar-badge { font-size:0.58rem; padding:0.22rem 0.55rem; }
+      .btn-theme { width:28px; height:28px; font-size:0.72rem; }
+      .btn-menu { display:flex; width:32px; height:32px; }
       .sidebar {
-        position: fixed;
-        top: 60px; left: 0;
-        height: calc(100vh - 60px);
-        width: 250px;
-        max-width: 80vw;
-        transform: translateX(-100%);
-        box-shadow: 4px 0 20px rgba(0,0,0,.2);
+        position:fixed; top:60px; left:0;
+        height:calc(100vh - 60px); width:250px; max-width:80vw;
+        transform:translateX(-100%); box-shadow:4px 0 20px rgba(0,0,0,.2);
       }
-      .sidebar.open { transform: translateX(0); }
-
-      .admin-main { padding: 1.2rem 1rem; }
-      .stats-row { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-      .stat-card { padding: 1rem; gap: 0.75rem; }
-      .stat-card-num { font-size: 1.3rem; }
-
-      .section-header { flex-direction: column; align-items: stretch; }
-      .header-actions { flex-wrap: wrap; width:100%; }
-      .search-box { flex: 1 1 100%; }
-      .search-box input { width: 100%; }
-
-      .table-wrap { display: none; }
-      .cards-list { display: flex; }
-
-      .modal { max-width: 95vw; }
-      .detail-grid { grid-template-columns: 1fr; }
-
-      .toast { left: 1rem; right: 1rem; bottom: 1rem; max-width: none; }
+      .sidebar.open { transform:translateX(0); }
+      .admin-main { padding:1.2rem 1rem; }
+      .stats-row { grid-template-columns:repeat(2,1fr); gap:0.75rem; }
+      .stat-card { padding:1rem; gap:0.75rem; }
+      .stat-card-num { font-size:1.3rem; }
+      .section-header { flex-direction:column; align-items:stretch; }
+      .header-actions { flex-wrap:wrap; width:100%; }
+      .search-box { flex:1 1 100%; }
+      .search-box input { width:100%; }
+      .table-wrap { display:none; }
+      .cards-list { display:flex; }
+      .modal { max-width:95vw; }
+      .detail-grid { grid-template-columns:1fr; }
+      .toast { left:1rem; right:1rem; bottom:1rem; max-width:none; }
     }
-
     @media (max-width: 480px) {
-      .stats-row { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
-      .stat-card { padding: 0.8rem; gap: 0.6rem; }
-      .stat-card-icon { width: 36px; height: 36px; font-size: 0.9rem; }
-      .stat-card-num { font-size: 1.1rem; }
-      .stat-card-label { font-size: 0.65rem; }
-      .topbar { padding: 0 0.6rem; }
-      .topbar-brand { font-size: 0.7rem; }
+      .stats-row { grid-template-columns:1fr 1fr; gap:0.6rem; }
+      .stat-card { padding:0.8rem; gap:0.6rem; }
+      .stat-card-icon { width:36px; height:36px; font-size:0.9rem; }
+      .stat-card-num { font-size:1.1rem; }
+      .stat-card-label { font-size:0.65rem; }
+      .topbar { padding:0 0.6rem; }
+      .topbar-brand { font-size:0.7rem; }
       .topbar-brand img.brand-logo { width:36px; height:36px; margin-bottom:-9px; }
-      .brand-admin { display: none; }
-      .topbar-badge { font-size: 0.55rem; padding: 0.2rem 0.45rem; letter-spacing: .04em; }
-      .filter-tabs { gap: 0.25rem; }
-      .tab-btn { font-size: 0.62rem; padding: 0.3rem 0.7rem; }
-      .btn-sm { font-size: 0.65rem; padding: 0.35rem 0.7rem; }
-      .modal-body { padding: 1rem; }
-      .modal-footer { padding: .85rem 1rem; }
-      table { min-width: 560px; }
-      th, td { padding: .6rem .65rem; }
+      .brand-admin { display:none; }
+      .topbar-badge { font-size:0.55rem; padding:0.2rem 0.45rem; letter-spacing:.04em; }
+      .btn-sm { font-size:0.65rem; padding:0.35rem 0.7rem; }
+      .modal-body { padding:1rem; }
+      .modal-footer { padding:.85rem 1rem; }
     }
-
   </style>
 </head>
 <body>
@@ -477,8 +352,6 @@
 </div>
 
 <div class="admin-layout">
-
-  <!-- Backdrop for mobile sidebar -->
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <!-- SIDEBAR -->
@@ -496,7 +369,6 @@
       <i class="fa-solid fa-file-invoice"></i> Quote Requests
       <span class="sidebar-count" id="countQuote">0</span>
     </a>
-
     <p class="sidebar-section">Filter</p>
     <a class="sidebar-link" onclick="showStatus('new')">
       <i class="fa-solid fa-circle" style="color:#E8470A;font-size:.6rem"></i> New
@@ -508,20 +380,17 @@
     <a class="sidebar-link" onclick="showStatus('cancelled')">
       <i class="fa-solid fa-circle" style="color:#e74c3c;font-size:.6rem"></i> Cancelled
     </a>
-
     <p class="sidebar-section">Actions</p>
     <a class="sidebar-link" onclick="exportCSV()">
       <i class="fa-solid fa-file-csv"></i> Export CSV
     </a>
-    <a class="sidebar-link danger" onclick="confirmClearAll()" style="color:#e74c3c;">
+    <a class="sidebar-link" onclick="confirmClearAll()" style="color:#e74c3c;">
       <i class="fa-solid fa-trash"></i> Clear All Data
     </a>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <main class="admin-main">
-
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-card-icon orange"><i class="fa-solid fa-inbox"></i></div>
@@ -541,7 +410,6 @@
       </div>
     </div>
 
-    <!-- Table header -->
     <div class="section-header">
       <h2 class="section-title" id="tableTitle">All Submissions</h2>
       <div class="header-actions">
@@ -558,20 +426,14 @@
       </div>
     </div>
 
-    <!-- Table (desktop/tablet) -->
+    <!-- Desktop table -->
     <div class="table-wrap">
       <div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>Type</th>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Details</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th>#</th><th>Type</th><th>Name</th><th>Contact</th>
+              <th>Details</th><th>Date</th><th>Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody id="submissionsTable"></tbody>
@@ -584,20 +446,19 @@
       </div>
     </div>
 
-    <!-- Cards (mobile) -->
+    <!-- Mobile cards -->
     <div class="cards-list" id="submissionsCards"></div>
     <div class="empty-state" id="emptyStateMobile" style="display:none;">
       <i class="fa-solid fa-inbox"></i>
       <h3>No submissions yet</h3>
       <p>Bookings and quote requests will appear here once customers submit the forms.</p>
     </div>
-
   </main>
 </div>
 
-<!-- DETAIL MODAL -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="detailModal">
+  <div class="modal">
     <div class="modal-header">
       <h3 id="modalTitle">Submission Details</h3>
       <button class="modal-close" onclick="closeModalDirect()"><i class="fa-solid fa-xmark"></i></button>
@@ -618,50 +479,75 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
 /* ════════════════════════════════════════════
-   ADMIN DASHBOARD JS  — powered by JSONBin.io
-   Paste the same values you put in Forms.js
+   ASCEND ADMIN DASHBOARD — Supabase backend
+   All data operations go through Supabase.
+   No secret key is exposed — security is
+   enforced by Row Level Security on the server.
 ════════════════════════════════════════════ */
 
-var JSONBIN_BIN_ID  = '6a2b407bf5f4af5e29e2e86a';
-var JSONBIN_API_KEY = '$2a$10$1lnq9.VdrdelJYhaiT2ON.9DDk96pPL.3WshQXlnWFf47wm9MmD8u';
-var JSONBIN_BASE    = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
+var currentFilter = 'all';
+var currentStatus = null;
+var currentId     = null;
+var allData       = [];
 
-var currentFilter  = 'all';
-var currentStatus  = null;
-var currentId      = null;
-var allData        = [];
+/* ── SESSION GATE (async) ── */
+async function initDashboard() {
+  var res = await sb.auth.getSession();
+  if (!res.data || !res.data.session) {
+    window.location.replace('login.html');
+    return;
+  }
+  /* Session valid — show the page and load data */
+  document.body.style.visibility = 'visible';
+  renderTable();
 
-/* ── FETCH from JSONBin ── */
-function loadData() {
-  return fetch(JSONBIN_BASE + '/latest', {
-    headers: { 'X-Master-Key': JSONBIN_API_KEY }
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(res) {
-    allData = (res.record && res.record.submissions) ? res.record.submissions : [];
+  /* Re-check session every minute */
+  setInterval(async function() {
+    var r = await sb.auth.getSession();
+    if (!r.data || !r.data.session) window.location.replace('login.html');
+  }, 60000);
+
+  /* Auto-refresh data every 30 seconds */
+  setInterval(renderTable, 30000);
+
+  /* Listen for Supabase sign-out events */
+  sb.auth.onAuthStateChange(function(event) {
+    if (event === 'SIGNED_OUT') window.location.replace('login.html');
   });
 }
 
-/* ── WRITE back to JSONBin ── */
-function putData() {
-  return fetch(JSONBIN_BASE, {
-    method:  'PUT',
-    headers: {
-      'Content-Type':     'application/json',
-      'X-Master-Key':     JSONBIN_API_KEY,
-      'X-Bin-Versioning': 'false'
-    },
-    body: JSON.stringify({ submissions: allData })
-  }).then(function(r) { return r.json(); });
+/* ── LOAD DATA from Supabase ── */
+async function loadData() {
+  var res = await sb.from('submissions').select('*').order('created_at', { ascending: false });
+  if (res.error) throw res.error;
+  allData = res.data || [];
 }
 
+/* ── UPDATE STATUS in Supabase ── */
+async function saveStatus(id, status) {
+  var res = await sb.from('submissions').update({ status: status }).eq('id', id);
+  if (res.error) throw res.error;
+}
+
+/* ── DELETE ROW in Supabase ── */
+async function deleteRow(id) {
+  var res = await sb.from('submissions').delete().eq('id', id);
+  if (res.error) throw res.error;
+}
+
+/* ── DELETE ALL ROWS ── */
+async function deleteAllRows() {
+  var res = await sb.from('submissions').delete().not('id', 'is', null);
+  if (res.error) throw res.error;
+}
+
+/* ── FILTER / SEARCH ── */
 function getFiltered() {
-  return allData.filter(function (s) {
+  return allData.filter(function(s) {
     if (currentStatus) return s.status === currentStatus;
     if (currentFilter === 'booking') return s.type === 'booking';
     if (currentFilter === 'quote')   return s.type === 'quote';
@@ -672,104 +558,88 @@ function getFiltered() {
 function applySearch(list) {
   var q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
   if (!q) return list;
-  return list.filter(function (s) {
-    var d = s.data;
-    var str = [
-      d.firstName, d.lastName, d.phone, d.email,
-      d.vehicle, d.vehicleSelect, d.pickupLocation, d.service
-    ].join(' ').toLowerCase();
-    return str.includes(q);
+  return list.filter(function(s) {
+    var d = s.data || {};
+    return [d.firstName, d.lastName, d.phone, d.email, d.vehicle, d.vehicleSelect, d.pickupLocation, d.service]
+      .join(' ').toLowerCase().includes(q);
   });
 }
 
+/* ── RENDER ── */
 function renderTable() {
   var tbody = document.getElementById('submissionsTable');
-  var empty = document.getElementById('emptyState');
   tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</td></tr>';
-  empty.style.display = 'none';
+  document.getElementById('emptyState').style.display = 'none';
 
   loadData()
-    .then(function() { _renderTableInner(); })
-    .catch(function() {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:#e74c3c;">⚠ Could not load data. Check your API key and Bin ID.</td></tr>';
+    .then(function() { _render(); })
+    .catch(function(err) {
+      console.error(err);
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:#e74c3c;">⚠ Could not load data from Supabase.</td></tr>';
     });
 }
 
-function _renderTableInner() {
+function _render() {
   updateStats();
   updateSidebarCounts();
 
   var filtered = applySearch(getFiltered());
   var tbody    = document.getElementById('submissionsTable');
   var empty    = document.getElementById('emptyState');
-  var cardsEl  = document.getElementById('submissionsCards');
+  var cards    = document.getElementById('submissionsCards');
   var emptyM   = document.getElementById('emptyStateMobile');
 
   if (!filtered.length) {
-    tbody.innerHTML = '';
-    cardsEl.innerHTML = '';
-    empty.style.display = 'block';
-    emptyM.style.display = 'block';
+    tbody.innerHTML = ''; cards.innerHTML = '';
+    empty.style.display = 'block'; emptyM.style.display = 'block';
     return;
   }
-  empty.style.display = 'none';
-  emptyM.style.display = 'none';
+  empty.style.display = 'none'; emptyM.style.display = 'none';
 
-  tbody.innerHTML = filtered.map(function (s, i) {
-    var d    = s.data;
-    var name = ((d.firstName || '') + ' ' + (d.lastName || '')).trim() || 'Unknown';
+  tbody.innerHTML = filtered.map(function(s, i) {
+    var d = s.data || {};
+    var name    = ((d.firstName||'') + ' ' + (d.lastName||'')).trim() || 'Unknown';
     var contact = d.phone || d.email || '—';
-    var detail  = s.type === 'booking'
-      ? (d.vehicle || d.vehicleSelect || '—')
-      : (d.service || '—');
-    var date = new Date(s.timestamp).toLocaleDateString('en-GB', {
-      day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
-    });
-
+    var detail  = s.type === 'booking' ? (d.vehicle || d.vehicleSelect || '—') : (d.service || '—');
+    var date    = new Date(s.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    var qid     = "'" + s.id + "'";
     return '<tr>' +
-      '<td style="color:var(--text-light);font-size:.75rem;">' + (i + 1) + '</td>' +
+      '<td style="color:var(--text-light);font-size:.75rem;">' + (i+1) + '</td>' +
       '<td><span class="type-badge type-' + s.type + '">' + s.type + '</span></td>' +
       '<td><div class="td-name">' + esc(name) + '</div></td>' +
-      '<td><div style="font-size:.8rem;">' + esc(contact) + '</div></td>' +
-      '<td><div style="font-size:.8rem;color:var(--text-muted);">' + esc(detail) + '</div></td>' +
+      '<td style="font-size:.8rem;">' + esc(contact) + '</td>' +
+      '<td style="font-size:.8rem;color:var(--text-muted);">' + esc(detail) + '</td>' +
       '<td style="font-size:.75rem;color:var(--text-muted);white-space:nowrap;">' + date + '</td>' +
       '<td><span class="status-badge status-' + s.status + '">' + s.status + '</span></td>' +
       '<td><div class="action-btns">' +
-        '<button class="act-btn" onclick="openModal(' + s.id + ')" title="View"><i class="fa-solid fa-eye"></i></button>' +
-        '<button class="act-btn" onclick="cycleStatus(' + s.id + ')" title="Change status"><i class="fa-solid fa-rotate"></i></button>' +
-        '<button class="act-btn danger" onclick="deleteEntry(' + s.id + ')" title="Delete"><i class="fa-solid fa-trash"></i></button>' +
+        '<button class="act-btn" onclick="openModal(' + qid + ')" title="View"><i class="fa-solid fa-eye"></i></button>' +
+        '<button class="act-btn" onclick="cycleStatus(' + qid + ')" title="Cycle status"><i class="fa-solid fa-rotate"></i></button>' +
+        '<button class="act-btn danger" onclick="deleteEntry(' + qid + ')" title="Delete"><i class="fa-solid fa-trash"></i></button>' +
       '</div></td>' +
     '</tr>';
   }).join('');
 
-  cardsEl.innerHTML = filtered.map(function (s) {
-    var d    = s.data;
-    var name = ((d.firstName || '') + ' ' + (d.lastName || '')).trim() || 'Unknown';
+  cards.innerHTML = filtered.map(function(s) {
+    var d = s.data || {};
+    var name    = ((d.firstName||'') + ' ' + (d.lastName||'')).trim() || 'Unknown';
     var contact = d.phone || d.email || '—';
-    var detail  = s.type === 'booking'
-      ? (d.vehicle || d.vehicleSelect || '—')
-      : (d.service || '—');
-    var date = new Date(s.timestamp).toLocaleDateString('en-GB', {
-      day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
-    });
-
+    var detail  = s.type === 'booking' ? (d.vehicle || d.vehicleSelect || '—') : (d.service || '—');
+    var date    = new Date(s.created_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    var qid     = "'" + s.id + "'";
     return '<div class="sub-card">' +
-      '<div class="sub-card-top">' +
-        '<div class="sub-card-badges">' +
-          '<span class="type-badge type-' + s.type + '">' + s.type + '</span>' +
-          '<span class="status-badge status-' + s.status + '">' + s.status + '</span>' +
-        '</div>' +
-      '</div>' +
+      '<div class="sub-card-top"><div class="sub-card-badges">' +
+        '<span class="type-badge type-' + s.type + '">' + s.type + '</span>' +
+        '<span class="status-badge status-' + s.status + '">' + s.status + '</span>' +
+      '</div></div>' +
       '<div class="sub-card-name">' + esc(name) + '</div>' +
       '<div class="sub-card-row"><i class="fa-solid fa-phone"></i><span>' + esc(contact) + '</span></div>' +
       '<div class="sub-card-row"><i class="fa-solid fa-circle-info"></i><span>' + esc(detail) + '</span></div>' +
       '<div class="sub-card-row"><i class="fa-regular fa-clock"></i><span>' + date + '</span></div>' +
       '<div class="sub-card-actions">' +
-        '<button class="act-btn" onclick="openModal(' + s.id + ')" title="View"><i class="fa-solid fa-eye"></i></button>' +
-        '<button class="act-btn" onclick="cycleStatus(' + s.id + ')" title="Change status"><i class="fa-solid fa-rotate"></i></button>' +
-        '<button class="act-btn danger" onclick="deleteEntry(' + s.id + ')" title="Delete"><i class="fa-solid fa-trash"></i></button>' +
-      '</div>' +
-    '</div>';
+        '<button class="act-btn" onclick="openModal(' + qid + ')" title="View"><i class="fa-solid fa-eye"></i></button>' +
+        '<button class="act-btn" onclick="cycleStatus(' + qid + ')" title="Cycle status"><i class="fa-solid fa-rotate"></i></button>' +
+        '<button class="act-btn danger" onclick="deleteEntry(' + qid + ')" title="Delete"><i class="fa-solid fa-trash"></i></button>' +
+      '</div></div>';
   }).join('');
 }
 
@@ -779,12 +649,9 @@ function updateStats() {
   var bookings = allData.filter(function(s){ return s.type==='booking'; }).length;
   var quotes   = allData.filter(function(s){ return s.type==='quote';   }).length;
   var newItems = allData.filter(function(s){ return s.status==='new';   }).length;
-
-  setText('statTotal',    total);
-  setText('statBookings', bookings);
-  setText('statQuotes',   quotes);
-  setText('statNew',      newItems);
-  setText('newBadge',     newItems + ' New');
+  setText('statTotal', total); setText('statBookings', bookings);
+  setText('statQuotes', quotes); setText('statNew', newItems);
+  setText('newBadge', newItems + ' New');
 }
 
 function updateSidebarCounts() {
@@ -796,42 +663,25 @@ function updateSidebarCounts() {
 
 /* ── TABS ── */
 function showTab(type) {
-  currentFilter = type;
-  currentStatus = null;
+  currentFilter = type; currentStatus = null;
   var titles = { all:'All Submissions', booking:'Vehicle Bookings', quote:'Quote Requests' };
   setText('tableTitle', titles[type] || 'Submissions');
-  updateSidebarActive();
-  renderTable();
-  closeSidebar();
-}
-
-function showStatus(status) {
-  currentStatus = status;
-  currentFilter = 'all';
-  setText('tableTitle', status.charAt(0).toUpperCase() + status.slice(1) + ' Submissions');
-  updateSidebarActive();
-  renderTable();
-  closeSidebar();
-}
-
-function updateSidebarActive() {
   document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
+  renderTable(); closeSidebar();
+}
+function showStatus(status) {
+  currentStatus = status; currentFilter = 'all';
+  setText('tableTitle', status.charAt(0).toUpperCase() + status.slice(1) + ' Submissions');
+  document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
+  renderTable(); closeSidebar();
 }
 
-/* ── MOBILE SIDEBAR DRAWER ── */
-function openSidebar() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebarBackdrop').classList.add('open');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarBackdrop').classList.remove('open');
-}
-function toggleSidebar() {
-  var sb = document.getElementById('sidebar');
-  if (sb.classList.contains('open')) closeSidebar(); else openSidebar();
-}
-document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
+/* ── SIDEBAR DRAWER ── */
+function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarBackdrop').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open'); }
+document.getElementById('menuBtn').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.contains('open') ? closeSidebar() : openSidebar();
+});
 document.getElementById('sidebarBackdrop').addEventListener('click', closeSidebar);
 
 /* ── MODAL ── */
@@ -839,39 +689,28 @@ function openModal(id) {
   var entry = allData.find(function(s){ return s.id === id; });
   if (!entry) return;
   currentId = id;
-
-  var d    = entry.data;
+  var d    = entry.data || {};
   var name = ((d.firstName||'') + ' ' + (d.lastName||'')).trim();
-  var date = new Date(entry.timestamp).toLocaleString('en-GB');
+  var date = new Date(entry.created_at).toLocaleString('en-GB');
 
   document.getElementById('modalTitle').textContent =
     (entry.type === 'booking' ? '🚗 Booking' : '📋 Quote') + ' — ' + name;
 
   var fields = entry.type === 'booking' ? [
-    ['Full Name',       name],
-    ['Phone',           d.phone || '—'],
-    ['Email',           d.email || '—'],
-    ['Vehicle',         d.vehicle || d.vehicleSelect || '—'],
-    ['Drive Option',    d.driveOption || '—'],
-    ['Pickup Date',     d.pickupDate || '—'],
-    ['Return Date',     d.returnDate || '—'],
-    ['Pickup Location', d.pickupLocation || '—'],
-    ['Notes',           d.notes || '—']
+    ['Full Name', name], ['Phone', d.phone||'—'], ['Email', d.email||'—'],
+    ['Vehicle', d.vehicle||d.vehicleSelect||'—'], ['Drive Option', d.driveOption||'—'],
+    ['Pickup Date', d.pickupDate||'—'], ['Return Date', d.returnDate||'—'],
+    ['Pickup Location', d.pickupLocation||'—'], ['Notes', d.notes||'—']
   ] : [
-    ['Full Name',    name],
-    ['Phone',        d.phone || '—'],
-    ['Email',        d.email || '—'],
-    ['Service',      d.service || '—'],
-    ['Travel Date',  d.travelDate || '—'],
-    ['Group Size',   d.groupSize || '—'],
-    ['Message',      d.message || '—']
+    ['Full Name', name], ['Phone', d.phone||'—'], ['Email', d.email||'—'],
+    ['Service', d.service||'—'], ['Travel Date', d.travelDate||'—'],
+    ['Group Size', d.groupSize||'—'], ['Message', d.message||'—']
   ];
 
   var html = '<div class="detail-grid">';
-  fields.forEach(function(f, i) {
-    var full = f[0] === 'Notes' || f[0] === 'Message' || f[0] === 'Pickup Location';
-    html += '<div class="detail-item' + (full ? ' detail-full' : '') + '">' +
-      '<label>' + f[0] + '</label><p>' + esc(f[1]) + '</p></div>';
+  fields.forEach(function(f) {
+    var full = ['Notes','Message','Pickup Location'].indexOf(f[0]) > -1;
+    html += '<div class="detail-item' + (full?' detail-full':'') + '"><label>' + f[0] + '</label><p>' + esc(f[1]) + '</p></div>';
   });
   html += '<hr class="detail-divider"/>';
   html += '<div class="detail-item"><label>Submitted</label><p>' + date + '</p></div>';
@@ -882,168 +721,109 @@ function openModal(id) {
   document.getElementById('modalStatusSelect').value = entry.status;
   document.getElementById('modalOverlay').classList.add('open');
 
-  // Mark as read
+  /* Auto-mark as read */
   if (entry.status === 'new') {
     entry.status = 'read';
-    putData().then(function() { renderTable(); });
+    saveStatus(id, 'read').then(function() { _render(); });
   }
 }
 
-function closeModal(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
-}
-function closeModalDirect() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  currentId = null;
-}
+function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); currentId = null; }
 
 function updateStatusFromModal() {
   if (!currentId) return;
   var entry = allData.find(function(s){ return s.id === currentId; });
   if (!entry) return;
-  entry.status = document.getElementById('modalStatusSelect').value;
-  putData().then(function() {
-    renderTable();
-    showToast('Status updated to "' + entry.status + '"');
-  });
+  var newStatus = document.getElementById('modalStatusSelect').value;
+  entry.status = newStatus;
+  saveStatus(currentId, newStatus).then(function() {
+    _render(); showToast('Status updated to "' + newStatus + '"');
+  }).catch(function() { showToast('Failed to update status', true); });
 }
 
-function deleteFromModal() {
-  if (!currentId) return;
-  deleteEntry(currentId);
-  closeModalDirect();
-}
+function deleteFromModal() { if (currentId) { deleteEntry(currentId); closeModalDirect(); } }
 
 /* ── ACTIONS ── */
 function cycleStatus(id) {
   var order = ['new','read','confirmed','cancelled'];
   var entry = allData.find(function(s){ return s.id === id; });
   if (!entry) return;
-  var idx = order.indexOf(entry.status);
-  entry.status = order[(idx + 1) % order.length];
-  putData().then(function() {
-    renderTable();
-    showToast('Status → ' + entry.status);
-  });
+  var next = order[(order.indexOf(entry.status) + 1) % order.length];
+  entry.status = next;
+  saveStatus(id, next).then(function() {
+    _render(); showToast('Status → ' + next);
+  }).catch(function() { showToast('Update failed', true); });
 }
 
 function deleteEntry(id) {
   if (!confirm('Delete this submission? This cannot be undone.')) return;
-  allData = allData.filter(function(s){ return s.id !== id; });
-  putData().then(function() {
-    renderTable();
-    showToast('Submission deleted');
-  });
+  deleteRow(id).then(function() {
+    allData = allData.filter(function(s){ return s.id !== id; });
+    _render(); showToast('Submission deleted');
+  }).catch(function() { showToast('Delete failed', true); });
 }
 
 function confirmClearAll() {
   if (!confirm('Delete ALL submissions? This cannot be undone.')) return;
-  allData = [];
-  putData().then(function() {
-    renderTable();
-    showToast('All submissions cleared', true);
-  });
+  deleteAllRows().then(function() {
+    allData = []; _render(); showToast('All submissions cleared', true);
+  }).catch(function() { showToast('Failed to clear data', true); });
 }
 
-function refreshTable() {
-  renderTable();
-  showToast('Refreshed');
-}
+function refreshTable() { renderTable(); showToast('Refreshed'); }
 
 /* ── EXPORT CSV ── */
 function exportCSV() {
   if (!allData.length) { showToast('No data to export', true); return; }
   var rows = [['ID','Type','Status','Date','First Name','Last Name','Phone','Email','Vehicle/Service','Details']];
   allData.forEach(function(s) {
-    var d = s.data;
-    rows.push([
-      s.id, s.type, s.status,
-      new Date(s.timestamp).toLocaleString('en-GB'),
+    var d = s.data || {};
+    rows.push([s.id, s.type, s.status, new Date(s.created_at).toLocaleString('en-GB'),
       d.firstName||'', d.lastName||'', d.phone||'', d.email||'',
-      d.vehicle||d.vehicleSelect||d.service||'',
-      d.pickupLocation||d.message||d.notes||''
-    ]);
+      d.vehicle||d.vehicleSelect||d.service||'', d.pickupLocation||d.message||d.notes||'']);
   });
-  var csv     = rows.map(function(r){ return r.map(function(c){ return '"'+(c+'').replace(/"/g,'""')+'"'; }).join(','); }).join('\n');
-  var blob    = new Blob([csv], { type:'text/csv' });
-  var url     = URL.createObjectURL(blob);
-  var a       = document.createElement('a');
-  a.href      = url;
-  a.download  = 'ascend-submissions-' + new Date().toISOString().split('T')[0] + '.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+  var csv  = rows.map(function(r){ return r.map(function(c){ return '"'+(c+'').replace(/"/g,'""')+'"'; }).join(','); }).join('\n');
+  var blob = new Blob([csv], { type:'text/csv' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a'); a.href = url;
+  a.download = 'ascend-submissions-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click(); URL.revokeObjectURL(url);
   showToast('CSV exported!');
 }
 
 /* ── UTILS ── */
-function setText(id, val) {
-  var el = document.getElementById(id);
-  if (el) el.textContent = val;
-}
-
-function esc(str) {
-  return (str+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
+function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+function esc(str) { return (str+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function showToast(msg, isError) {
   var t = document.getElementById('toast');
   t.textContent = (isError ? '⚠ ' : '✓ ') + msg;
-  t.className   = 'toast' + (isError ? ' error' : '');
+  t.className = 'toast' + (isError ? ' error' : '');
   t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 2800);
 }
 
-/* ── SEARCH ── */
-document.getElementById('searchInput').addEventListener('input', function() {
-  renderTable();
-});
+/* ── EVENTS ── */
+document.getElementById('searchInput').addEventListener('input', function() { _render(); });
 
-/* ── THEME TOGGLE ── */
 document.getElementById('themeBtn').addEventListener('click', function() {
-  var html = document.documentElement;
-  var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
+  var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
   document.getElementById('themeIcon').className = next === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
 });
 
-/* ── LOGOUT ── */
-document.getElementById('logoutBtn').addEventListener('click', function() {
+document.getElementById('logoutBtn').addEventListener('click', async function() {
   if (!confirm('Log out of the admin dashboard?')) return;
-  sessionStorage.removeItem('ascend_admin_session');
+  await sb.auth.signOut();
   window.location.replace('login.html');
 });
 
-/* ── KEYBOARD ── */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') { closeModalDirect(); closeSidebar(); }
 });
 
-/* ── LOGOUT / SESSION ── */
-document.getElementById('logoutBtn').addEventListener('click', function() {
-  if (!confirm('Log out of the admin dashboard?')) return;
-  sessionStorage.removeItem('ascend_admin_session');
-  window.location.replace('login.html');
-});
-
-function watchSession() {
-  try {
-    var raw = sessionStorage.getItem('ascend_admin_session');
-    if (!raw) { window.location.replace('login.html'); return; }
-    var s = JSON.parse(raw);
-    if (!s.expires || Date.now() > s.expires) {
-      sessionStorage.removeItem('ascend_admin_session');
-      window.location.replace('login.html');
-    }
-  } catch (e) {
-    window.location.replace('login.html');
-  }
-}
-setInterval(watchSession, 60000); // re-check every minute
-
-/* ── INIT ── */
-renderTable();
-// Auto-refresh every 30 seconds
-setInterval(renderTable, 30000);
+/* ── BOOT ── */
+initDashboard();
 </script>
 </body>
 </html>
